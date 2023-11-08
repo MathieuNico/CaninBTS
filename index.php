@@ -1,3 +1,14 @@
+<?php
+// Vérifiez si l'utilisateur est connecté en vérifiant la session
+session_start();
+if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
+    // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
+    header("Location: login.php");
+    exit;
+}
+// Le nom d'utilisateur est stocké dans $_SESSION["username"]
+$nomUtilisateur = $_SESSION["username"];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,6 +54,12 @@
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="index.html" class="nav-link">Home</a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="#" class="nav-link">Bonjour  <?php echo $nomUtilisateur; ?></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="logout.php" class="nav-link">Se déconnecter</a>
       </li>
     </ul>
 
