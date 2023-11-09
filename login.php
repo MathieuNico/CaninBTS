@@ -9,7 +9,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pass = "root";
 
     // Le formulaire a été soumis
+<<<<<<< HEAD
     $nom = $_POST["firstname"];
+=======
+    $nom = $_POST["nom"];
+>>>>>>> 231708a779bd93a58607c1264ea2f6c8f4df9ee9
     $mdp = $_POST["mdp"];
 
     try {
@@ -20,8 +24,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Requête SQL pour vérifier les informations de connexion
+<<<<<<< HEAD
         $requete = $connexion->prepare("SELECT * FROM users WHERE firstname = :firstname AND mdp = :mdp");
         $requete->bindParam(':firstname', $nom);
+=======
+        $requete = $connexion->prepare("SELECT * FROM toilettage WHERE nom = :nom AND mdp = :mdp");
+        $requete->bindParam(':nom', $nom);
+>>>>>>> 231708a779bd93a58607c1264ea2f6c8f4df9ee9
         $requete->bindParam(':mdp', $mdp);
         $requete->execute();
 
@@ -61,7 +70,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h1>Se connecter</h1>
                 <form action="login.php" method="post">
                 <p>Nom</p>
+<<<<<<< HEAD
                     <input type="text" name="firstname" id="firstname" placeholder="Tapez votre nom" required>
+=======
+                    <input type="text" name="nom" id="nom" placeholder="Tapez votre nom" required>
+>>>>>>> 231708a779bd93a58607c1264ea2f6c8f4df9ee9
                 <p>Mot de passe</p>
                     <input type="password" name="mdp" id="mdp" placeholder="Tapez votre mot de passe" required>
                     <input type="submit" name="" value="Connexion"> </br>
