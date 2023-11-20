@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pass = "root";
 
     // Le formulaire a été soumis
-    $nom = $_POST["nom"];
+    $firstname = $_POST["firstname"];
     $mdp = $_POST["mdp"];
 
     try {
@@ -20,15 +20,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Requête SQL pour vérifier les informations de connexion
-        $requete = $connexion->prepare("SELECT * FROM toilettage WHERE nom = :nom AND mdp = :mdp");
-        $requete->bindParam(':nom', $nom);
+        $requete = $connexion->prepare("SELECT * FROM users WHERE firstname = :firstname AND mdp = :mdp");
+        $requete->bindParam(':firstname', $firstname);
         $requete->bindParam(':mdp', $mdp);
         $requete->execute();
 
         // Vérifiez si des données correspondantes existent dans la base de données
         if ($requete->rowCount() == 1) {
             $_SESSION["isLoggedIn"] = true;
-            $_SESSION["username"] = $nom; // Vous pouvez stocker des informations sur l'utilisateur dans la session
+            $_SESSION["username"] = $firstname; // Vous pouvez stocker des informations sur l'utilisateur dans la session
             header("Location:index.php"); // Redirigez l'utilisateur vers la page protégée
             exit();
         } else {
@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h1>Se connecter</h1>
                 <form action="login.php" method="post">
                 <p>Nom</p>
-                    <input type="text" name="nom" id="nom" placeholder="Tapez votre nom" required>
+                    <input type="text" name="firstname" id="firstname" placeholder="Tapez votre nom" required>
                 <p>Mot de passe</p>
                     <input type="password" name="mdp" id="mdp" placeholder="Tapez votre mot de passe" required>
                     <input type="submit" name="" value="Connexion"> </br>

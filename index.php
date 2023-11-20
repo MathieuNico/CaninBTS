@@ -1,4 +1,16 @@
 <?php
+$serveur = "localhost"; // Remplacez localhost par l'adresse de votre serveur
+$user = "root"; // Remplacez par votre nom d'utilisateur
+$pass = "root"; // Remplacez par votre mot de passe
+$dbname = "toilettage"; // Remplacez par le nom de votre base de données
+
+// Connexion à la base de données
+$connexion = new mysqli($serveur, $user, $pass, $dbname);
+
+// Vérifier la connexion
+if ($connexion->connect_error) {
+    die("La connexion a échoué : " . $connexion->connect_error);
+}
 // Vérifiez si l'utilisateur est connecté en vérifiant la session
 session_start();
 if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
@@ -8,6 +20,23 @@ if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
 }
 // Le nom d'utilisateur est stocké dans $_SESSION["username"]
 $nomUtilisateur = $_SESSION["username"];
+
+// Envoi des données du formulaire
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  // Récupérer les données du formulaire
+  $firstname = $_POST["firstname"];
+  $mail = $_POST["mail"];
+
+  // Vous pouvez maintenant traiter les données, les valider, les stocker dans une base de données, etc.
+  
+  // Exemple de réponse
+  echo "Bonjour $nom, votre e-mail est $email.";
+}
+
+
+
+// Fermer la connexion
+$connexion->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,7 +82,7 @@ $nomUtilisateur = $_SESSION["username"];
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="index.html" class="nav-link">Home</a>
+        <a href="index.php" class="nav-link">Home</a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Bonjour  <?php echo $nomUtilisateur; ?></a>
@@ -106,7 +135,7 @@ $nomUtilisateur = $_SESSION["username"];
           <li class="nav-item menu-open">
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="./index.html" class="nav-link active">
+                <a href="./index.php" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Tableau de bord</p>
                 </a>
