@@ -87,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | General Form Elements</title>
+  <title>CANIN BTS | General Form Elements</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -157,7 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
             </ul>
           </li>
           <li class="nav-item">
-            <a href="../charts/chartjs.html" class="nav-link">
+            <a href="../charts/chartjs.php" class="nav-link">
               <i class="nav-icon fas fa-chart-pie"></i>
               <p>
                 Graphique
@@ -165,13 +165,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
             </a>
           </li>
           <li class="nav-item">
-            <a href="../forms/inscription.html" class="nav-link active">
+            <a href="../forms/inscription.php" class="nav-link ">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 Inscription
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="../forms/modification.php" class="nav-link active">
+              <i class="nav-icon fas fa-solid fa-pen"></i>
+              <p>
+                Modification
+              </p>
+            </a>
           </li>
           <li class="nav-item">
             <a href="../tables/data.html" class="nav-link">

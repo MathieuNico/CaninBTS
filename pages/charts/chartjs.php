@@ -63,7 +63,7 @@ $connexion->close();
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CANINBTS | Statistic</title>
+  <title>CANIN BTS | Statistic</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -147,13 +147,20 @@ $connexion->close();
             </a>
           </li>
           <li class="nav-item">
-            <a href="../forms/inscription.html" class="nav-link">
+            <a href="../forms/inscription.php" class="nav-link">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 Inscription
               </p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="../forms/modification.php" class="nav-link">
+              <i class="nav-icon fas fa-solid fa-pen"></i>
+              <p>
+                Modification
+              </p>
+            </a>
           </li>
           <li class="nav-item">
             <a href="../tables/data.html" class="nav-link">
