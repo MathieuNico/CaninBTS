@@ -1,3 +1,76 @@
+<?php
+// Vérifier la connexion
+if ($connexion->connect_error) {
+    die("La connexion a échoué : " . $connexion->connect_error);
+}
+// Vérifiez si l'utilisateur est connecté en vérifiant la session
+session_start();
+if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
+    // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
+    header("Location: ../../login.php");
+    exit;
+}
+// Le nom d'utilisateur est stocké dans $_SESSION["username"]
+$nomUtilisateur = $_SESSION["username"];
+?>
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Récupérer les données du formulaire pour le client
+    $name = $_POST["name"];
+    $prenom = $_POST["prenom"];
+    $email = $_POST["email"];
+    $phone = $_POST["phone"];
+    $adress = $_POST["adress"];
+    $commentary = $_POST["commentaire"];
+
+    // Connexion à la base de données en utilisant MySQLi
+    $serveur = "localhost"; // Remplacez localhost par l'adresse de votre serveur
+    $user = "root"; // Remplacez par votre nom d'utilisateur
+    $pass = "root"; // Remplacez par votre mot de passe
+    $dbname = "toilettage"; // Remplacez par le nom de votre base de données
+
+    $connexion = new mysqli($serveur, $user, $pass, $dbname);
+
+    // Vérifier la connexion
+    if ($connexion->connect_error) {
+        die("La connexion a échoué : " . $connexion->connect_error);
+    }
+    var_dump($_POST);
+
+    // Préparez et exécutez la requête d'insertion pour le client
+    $insertClientQuery = "INSERT INTO customers (firstname, lastname, telephone, mail, postal_adress, commentary) VALUES ('$name', '$prenom', '$phone', '$email', '$adress', '$commentary')";
+    if ($connexion->query($insertClientQuery) === TRUE) {
+        // Récupérer l'ID du client nouvellement inséré
+        $clientId = $connexion->insert_id;
+
+        // Vérifier si le formulaire pour les animaux est rempli
+        if (!empty($_POST["nameDog"]) && !empty($_POST["race"])) {
+            // Récupérer les données du formulaire pour l'animal
+            $namedog = $_POST["nameDog"];
+            $race = $_POST["race"];
+            $age = $_POST["age"];
+            $poids = $_POST["poids"];
+            $taille = $_POST["taille"];
+            $commentairedog = $_POST["commentairedog"];
+
+            // Préparez et exécutez la requête d'insertion pour l'animal avec la clé étrangère
+            $insertAnimalQuery = "INSERT INTO animals (`name`, `breed`, `age`, `weight`, `height`, `comment`, `customer_id`) VALUES ('$namedog', '$race', '$age', '$poids', '$taille', '$commentairedog', '$clientId')";
+            if ($connexion->query($insertAnimalQuery) === TRUE) {
+                echo "Données insérées dans la base de données avec succès.";
+            } else {
+                echo "Erreur lors de l'insertion des données de l'animal : " . $connexion->error;
+            }
+        } else {
+            echo "Aucune information sur l'animal fournie. Seuls les détails du client ont été enregistrés.";
+        }
+    } else {
+        echo "Erreur lors de l'insertion des données du client : " . $connexion->error;
+    }
+
+    // Fermez la connexion à la base de données
+    $connexion->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -163,36 +236,58 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form>
+              <form method="post" class="customer-form">
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="exampleInputName1">Nom</label>
-                    <input type="name" class="form-control" id="exampleInputname1" placeholder="Entrez votre nom">
+                    <label for="name">Nom</label>
+                    <input type="name" class="form-control" name="name" id="name" placeholder="Entrez votre nom">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputPrenom1">Prénom</label>
-                    <input type="prenom" class="form-control" id="exampleInputprenom1" placeholder="Entrez votre Prénom">
+                    <label for="prenom">Prénom</label>
+                    <input type="prenom" class="form-control" name="prenom" id="prenom" placeholder="Entrez votre Prénom">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputEmail1">Email</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Entrez votre email">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Entrez votre email">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputPhone1">Téléphone</label>
-                    <input type="phone" class="form-control" id="exampleInputPhone1" placeholder="Entrez votre Numéro de téléphone">
+                    <label for="phone">Téléphone</label>
+                    <input type="phone" class="form-control" name="phone" id="phone" placeholder="Entrez votre Numéro de téléphone">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputAdresse1">Adresse</label>
-                    <input type="adress" class="form-control" id="exampleInputAdress1" placeholder="Entrez votre adresse">
+                    <label for="adress">Adresse</label>
+                    <input type="adress" class="form-control" name="adress" id="adress" placeholder="Entrez votre adresse">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputPostalcode1">Code Postal</label>
-                    <input type="postalcode" class="form-control" id="exampleInputPostalcode1" placeholder="Entrez votre code postal">
+                    <label for="commentaire">Commentaire</label>
+                    <input type="commentaire" class="form-control" name="commentaire" id="commentaire" placeholder="Commentaires">
+                  </div>
+                <div id="d1" style="display: none" >
+                  <div class="form-group">
+                    <label for="nameDog">Nom</label>
+                    <input type="nameDog" class="form-control" name="nameDog" id="nameDog" placeholder="Entrez le nom du chien">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputPostaladress1">Ville</label>
-                    <input type="postaladress" class="form-control" id="exampleInputPostaladress1" placeholder="Entrez votre adresse postal">
+                    <label for="race">Race</label>
+                    <input type="race" class="form-control" name="race" id="race" placeholder="Entrez la race">
                   </div>
+                  <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="age" class="form-control" name="age" id="age" placeholder="Entrez l'âge du chien">
+                  </div>
+                  <div class="form-group">
+                    <label for="poids">Poids</label>
+                    <input type="poids" class="form-control" name="poids" id="poids" placeholder="Entrez le poids">
+                  </div>
+                  <div class="form-group">
+                    <label for="taille">Taille</label>
+                    <input type="taille" class="form-control" name="taille" id="taille" placeholder="Entrez la taille">
+                  </div>
+                  <div class="form-group">
+                    <label for="commentairedog">Commentaires</label>
+                    <input type="commentairedog" class="form-control" name="commentairedog" id="commentairedog" placeholder="Entrez un commentaire">
+                  </div>
+                </div>
                   <div class="card-footer">
                     <button id="blockBtn" style="display: block" class="btn btn-primary">Rattacher un nouveau chien</button>
                   </div>
@@ -224,36 +319,12 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form>
+              <form method="post" class="animal-form">
                 <div class="card-body">
-                  <div class="form-group">
-                    <label for="exampleInputNameDog">Nom</label>
-                    <input type="nameDog" class="form-control" id="exampleInputNameDog" placeholder="Entrez le nom du chien">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputRace">Race</label>
-                    <input type="race" class="form-control" id="exampleInputRace" placeholder="Entrez la race">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputAge">Age</label>
-                    <input type="age" class="form-control" id="exampleInputAge" placeholder="Entrez l'âge du chien">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputpoids">Poids</label>
-                    <input type="poids" class="form-control" id="exampleInputpoids" placeholder="Entrez le poids">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputTaille">Taille</label>
-                    <input type="taille" class="form-control" id="exampleInputTaille" placeholder="Entrez la taille">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPostalCommentaire">Commentaires</label>
-                    <input type="commentaire" class="form-control" id="exampleInputPostalCommentaire" placeholder="Entrez un commentaire">
-                  </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                  <button type="submit" class="btn btn-secondary">Envoyer</button>
+                  <button type="submit" onclick="submitBothForms()" class="btn btn-secondary">Envoyer</button>
                 </div>
               </form>
             </div>

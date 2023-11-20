@@ -1,3 +1,87 @@
+<?php
+// Vérifier la connexion
+if ($connexion->connect_error) {
+    die("La connexion a échoué : " . $connexion->connect_error);
+}
+// Vérifiez si l'utilisateur est connecté en vérifiant la session
+session_start();
+if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
+    // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
+    header("Location: ../../login.php");
+    exit;
+}
+// Le nom d'utilisateur est stocké dans $_SESSION["username"]
+$nomUtilisateur = $_SESSION["username"];
+?>
+<?php
+$serveur = "localhost";
+$user = "root";
+$pass = "root";
+$dbname = "toilettage";
+
+$connexion = new mysqli($serveur, $user, $pass, $dbname);
+
+if ($connexion->connect_error) {
+    die("La connexion a échoué : " . $connexion->connect_error);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['search'])) {
+    $searchTerm = $_GET['search'];
+    $searchQuery = "SELECT * FROM customers WHERE mail LIKE '%$searchTerm%' OR lastname LIKE '%$searchTerm'";
+    $result = $connexion->query($searchQuery);
+
+    if ($result->num_rows > 0) {
+        $clientData = $result->fetch_assoc();
+        $customerId = $clientData['id'];
+        $animalsQuery = "SELECT * FROM animals WHERE customer_id = $customerId";
+        $animalsResult = $connexion->query($animalsQuery);
+
+        if ($animalsResult->num_rows > 0) {
+            $animalsData = $animalsResult->fetch_assoc();
+        }
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    $customerIdPost = $_POST["customer_id"];
+    $name = $_POST["name"];
+    $prenom = $_POST["prenom"];
+    $email = $_POST["email"];
+    $phone = $_POST["phone"];
+    $adress = $_POST["adress"];
+    $commentary = $_POST["commentary"];
+    //... (autres champs à mettre à jour pour le client)
+
+    // Requête pour mettre à jour les informations du client
+    $updateClientQuery = "UPDATE customers SET `name` = '$name', `prenom` = '$prenom', `email` = '$email', `phone` = '$phone', `adress` = '$adress', `commentary` = '$commentary' WHERE id = $customerIdPost";
+
+    if ($connexion->query($updateClientQuery) === TRUE) {
+        echo "Mise à jour des informations du client effectuée avec succès.";
+    } else {
+        echo "Erreur lors de la mise à jour des informations du client : " . $connexion->error;
+    }
+
+    $namedog = $_POST["nameDog"];
+    $race = $_POST["race"];
+    $age = $_POST["age"];
+    $poids = $_POST["poids"];
+    $taille = $_POST["taille"];
+    $commentairedog = $_POST["commentairedog"];
+    //... (autres champs à mettre à jour pour l'animal)
+
+    // Requête pour mettre à jour les informations de l'animal
+    $updateAnimalQuery = "UPDATE animals SET `name` = '$namedog', `breed` = '$race', `age` = '$age', `weight` = '$poids', `height` = '$taille', `comment` = '$commentairedog' WHERE customer_id = $customerIdPost";
+
+    if ($connexion->query($updateAnimalQuery) === TRUE) {
+        echo "Mise à jour des informations des animaux effectuée avec succès.";
+    } else {
+        echo "Erreur lors de la mise à jour des informations des animaux : " . $connexion->error;
+    }
+
+    // $connexion->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -159,45 +243,68 @@
             <!-- general form elements -->
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">Nouveau Client</h3>
+                <h3 class="card-title">Modification des informations client</h3>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form>
+              <form method="get" class="customer-form">
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="exampleInputName1">Nom</label>
-                    <input type="name" class="form-control" id="exampleInputname1" placeholder="Entrez votre nom">
+                    <label for="name">Rechercher un client</label>
+                    <input type="texte" class="form-control" name="search" id="name" placeholder="Entrez votre recherche">
+                  </div>
+                  <button id="blockBtn3" style="display: block" class="btn btn-primary">Rechercher</button>
+              <form>
+              <form method="post" class="customer-form">
+                  <div class="form-group">
+                   <input type="hidden" name="customer_id" value="<?php echo $clientData['id']; ?>">
+                    <label for="prenom">Prénom</label>
+                    <input type="prenom" class="form-control" name="prenom" id="prenom" value="<?php echo $clientData['firstname']; ?>">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputPrenom1">Prénom</label>
-                    <input type="prenom" class="form-control" id="exampleInputprenom1" placeholder="Entrez votre Prénom">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" value="<?php echo $clientData['mail']; ?>">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputEmail1">Email</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Entrez votre email">
+                    <label for="phone">Téléphone</label>
+                    <input type="phone" class="form-control" name="phone" id="phone" value="<?php echo $clientData['telephone']; ?>">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputPhone1">Téléphone</label>
-                    <input type="phone" class="form-control" id="exampleInputPhone1" placeholder="Entrez votre Numéro de téléphone">
+                    <label for="adress">Adresse</label>
+                    <input type="adress" class="form-control" name="adress" id="adress" value="<?php echo $clientData['postal_adress']; ?>">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputAdresse1">Adresse</label>
-                    <input type="adress" class="form-control" id="exampleInputAdress1" placeholder="Entrez votre adresse">
+                    <label for="commentaire">Commentaire</label>
+                    <input type="commentaire" class="form-control" name="commentaire" id="commentaire" value="<?php echo $clientData['commentary']; ?>">
+                  </div>
+                <div id="d1" style="display: block" >
+                  <div class="form-group">
+                    <label for="nameDog">Nom</label>
+                    <input type="nameDog" class="form-control" name="nameDog" id="nameDog" value="<?php echo $animalsData['name']; ?>">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputPostalcode1">Code Postal</label>
-                    <input type="postalcode" class="form-control" id="exampleInputPostalcode1" placeholder="Entrez votre code postal">
+                    <label for="race">Race</label>
+                    <input type="race" class="form-control" name="race" id="race" value="<?php echo $animalsData['breed']; ?>">
                   </div>
                   <div class="form-group">
-                    <label for="exampleInputPostaladress1">Ville</label>
-                    <input type="postaladress" class="form-control" id="exampleInputPostaladress1" placeholder="Entrez votre adresse postal">
+                    <label for="age">Age</label>
+                    <input type="age" class="form-control" name="age" id="age" value="<?php echo $animalsData['age']; ?>">
                   </div>
+                  <div class="form-group">
+                    <label for="poids">Poids</label>
+                    <input type="poids" class="form-control" name="poids" id="poids" value="<?php echo $animalsData['weight']; ?>">
+                  </div>
+                  <div class="form-group">
+                    <label for="taille">Taille</label>
+                    <input type="taille" class="form-control" name="taille" id="taille" value="<?php echo $animalsData['height']; ?>">
+                  </div>
+                  <div class="form-group">
+                    <label for="commentairedog">Commentaires</label>
+                    <input type="commentairedog" class="form-control" name="commentairedog" id="commentairedog" value="<?php echo $animalsData['comment']; ?>">
+                  </div>
+                </div>
                   <div class="card-footer">
-                    <button id="blockBtn" style="display: block" class="btn btn-primary">Rattacher un nouveau chien</button>
-                  </div>
-                  <div class="card-footer">
-                    <button type="submit" id="blockBtn2" style="display: block" class="btn btn-success">Valider l'inscription</button>
+                    <button type="submit" name="update" style="display: block" class="btn btn-success">Valider les modifications</button>
                   </div>
                 </div>
                 <!-- /.card-body -->
@@ -224,36 +331,12 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form>
+              <form method="post" class="animal-form">
                 <div class="card-body">
-                  <div class="form-group">
-                    <label for="exampleInputNameDog">Nom</label>
-                    <input type="nameDog" class="form-control" id="exampleInputNameDog" placeholder="Entrez le nom du chien">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputRace">Race</label>
-                    <input type="race" class="form-control" id="exampleInputRace" placeholder="Entrez la race">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputAge">Age</label>
-                    <input type="age" class="form-control" id="exampleInputAge" placeholder="Entrez l'âge du chien">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputpoids">Poids</label>
-                    <input type="poids" class="form-control" id="exampleInputpoids" placeholder="Entrez le poids">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputTaille">Taille</label>
-                    <input type="taille" class="form-control" id="exampleInputTaille" placeholder="Entrez la taille">
-                  </div>
-                  <div class="form-group">
-                    <label for="exampleInputPostalCommentaire">Commentaires</label>
-                    <input type="commentaire" class="form-control" id="exampleInputPostalCommentaire" placeholder="Entrez un commentaire">
-                  </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                  <button type="submit" class="btn btn-secondary">Envoyer</button>
+                  <button type="submit" onclick="submitBothForms()" class="btn btn-secondary">Envoyer</button>
                 </div>
               </form>
             </div>
