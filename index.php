@@ -143,7 +143,7 @@ $connexion->close();
             </ul>
           </li>
           <li class="nav-item">
-            <a href="pages/charts/chartjs.html" class="nav-link">
+            <a href="pages/charts/chartjs.php" class="nav-link">
               <i class="nav-icon fas fa-chart-pie"></i>
               <p>
                 Graphique
