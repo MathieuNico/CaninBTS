@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <<<<<<< HEAD
     $nom = $_POST["firstname"];
 =======
-    $nom = $_POST["nom"];
+    $nom = $_POST["nom"];  
 >>>>>>> 231708a779bd93a58607c1264ea2f6c8f4df9ee9
 >>>>>>> 72384c87c8359702bd7b5de78fee9602673bb106
     $mdp = $_POST["mdp"];
