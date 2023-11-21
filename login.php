@@ -1,62 +1,38 @@
 <?php
-session_start(); // Démarrez la session au début de votre script
+session_start();
 
-// Vérifiez si l'utilisateur a soumis le formulaire
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $serveur = "localhost";
     $dbname = "toilettage";
     $user = "root";
     $pass = "root";
 
-    // Le formulaire a été soumis
-
     $firstname = $_POST["firstname"];
-
-    $nom = $_POST["firstname"];
-
-    $nom = $_POST["nom"];  
-
     $mdp = $_POST["mdp"];
 
     try {
-        // Connexion à la base de données
         $connexion = new PDO("mysql:host=$serveur;dbname=$dbname", $user, $pass);
-
-        // Définir le mode d'erreur PDO à exception
         $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        // Requête SQL pour vérifier les informations de connexion
 
         $requete = $connexion->prepare("SELECT * FROM users WHERE firstname = :firstname AND mdp = :mdp");
         $requete->bindParam(':firstname', $firstname);
-
-        $requete = $connexion->prepare("SELECT * FROM users WHERE firstname = :firstname AND mdp = :mdp");
-        $requete->bindParam(':firstname', $nom);
-
-        $requete = $connexion->prepare("SELECT * FROM toilettage WHERE nom = :nom AND mdp = :mdp");
-        $requete->bindParam(':nom', $nom);
-
         $requete->bindParam(':mdp', $mdp);
         $requete->execute();
 
-        // Vérifiez si des données correspondantes existent dans la base de données
         if ($requete->rowCount() == 1) {
             $_SESSION["isLoggedIn"] = true;
-            $_SESSION["username"] = $firstname; // Vous pouvez stocker des informations sur l'utilisateur dans la session
-            header("Location:index.php"); // Redirigez l'utilisateur vers la page protégée
+            $_SESSION["username"] = $firstname;
+            header("Location:index.php");
             exit();
         } else {
             header("Location: login.php?error=1");
             exit();
         }
     } catch (PDOException $e) {
-        // En cas d'erreur de connexion à la base de données, affichez un message d'erreur
         echo "Erreur : " . $e->getMessage();
     }
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -75,12 +51,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <h1>Se connecter</h1>
                 <form action="login.php" method="post">
                 <p>Nom</p>
-
                     <input type="text" name="firstname" id="firstname" placeholder="Tapez votre nom" required>
-                    <input type="text" name="firstname" id="firstname" placeholder="Tapez votre nom" required>
-
-                    <input type="text" name="nom" id="nom" placeholder="Tapez votre nom" required>
-
+<!-- 
+                    <input type="text" name="nom" id="nom" placeholder="Tapez votre nom" required> -->
                 <p>Mot de passe</p>
                     <input type="password" name="mdp" id="mdp" placeholder="Tapez votre mot de passe" required>
                     <input type="submit" name="" value="Connexion"> </br>
