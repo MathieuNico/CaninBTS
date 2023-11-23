@@ -1,32 +1,38 @@
 <?php
-// Connexion à la base de données (assure-toi d'avoir une connexion établie)
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "toilettage";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Vérifie la connexion
-if ($conn->connect_error) {
-    die("La connexion à la base de données a échoué : " . $conn->connect_error);
-}
 
 // Récupère les données de la table 'animals'
-$sql = "SELECT * FROM animals";
-$result = $conn->query($sql);
+require_once '../../dist/php/animalsclass.php';
 
 // Récupère les données de la table 'customers'
-$sql_customers = "SELECT * FROM customers";
-$result_customers = $conn->query($sql_customers);
+require_once '../../dist/php/customerclass.php';
 
 // Récupère les données de la table 'services'
-$sql_services = "SELECT * FROM services";
-$result_services = $conn->query($sql_services);
+require_once '../../dist/php/servicesclass.php';
+
+
+// Créer une instance de la classe Services
+$servicesInstance = new Services();
+
+// Récupérer tous les services
+$services = $servicesInstance->getAll();
+
+// Afficher les services permet de voir les données transmise
+//foreach ($services as $service) {
+//    echo "ID : " . $service->id . "<br>";
+//    echo "Nom : " . $service->name . "<br>";
+//    echo "Prix : " . $service->price . "<br>";
+//    echo "-----------------------<br>";
+//}
+
+// Vérifier si la classe a été incluse
+//if (class_exists('Services')) {
+//  echo "La classe Services a été incluse avec succès.";
+//} else {
+//  echo "Erreur lors de l'inclusion de la classe Services.";
+//}
 
 // Récupère les données de la table 'users'
-$sql_users = "SELECT * FROM users";
-$result_users = $conn->query($sql_users);
+
 
 ?>
 
@@ -339,19 +345,20 @@ $result_users = $conn->query($sql_users);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    if ($result_services->num_rows > 0) {
-                                        while ($row_services = $result_services->fetch_assoc()) {
-                                            echo "<tr>";
-                                            echo "<td>" . $row_services["id"] . "</td>";
-                                            echo "<td>" . $row_services["name"] . "</td>";
-                                            echo "<td>" . $row_services["price"] . "</td>";
-                                            echo "</tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='3'>Aucun service trouvé</td></tr>";
+                                <?php
+                                // Vérifier si des services sont disponibles
+                                if (!empty($services)) {
+                                    foreach ($services as $service) {
+                                        echo "<tr>";
+                                        echo "<td>" . $service->id . "</td>";
+                                        echo "<td>" . $service->name . "</td>";
+                                        echo "<td>" . $service->price . "</td>";
+                                        echo "</tr>";
                                     }
-                                    ?>
+                                } else {
+                                    echo "<tr><td colspan='3'>Aucun service trouvé</td></tr>";
+                                }
+                                ?>
                                 </tbody>
                                 <tfoot>
                                     <tr>
