@@ -1,74 +1,32 @@
 <?php
-// Vérifier la connexion
-if ($connexion->connect_error) {
-    die("La connexion a échoué : " . $connexion->connect_error);
-}
-// Vérifiez si l'utilisateur est connecté en vérifiant la session
-session_start();
-if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
-    // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
-    header("Location: ../../login.php");
-    exit;
-}
-// Le nom d'utilisateur est stocké dans $_SESSION["username"]
-$nomUtilisateur = $_SESSION["username"];
-?>
-<?php
+require_once '../../dist/php/customerclass.php';
+require_once '../../dist/php/animalsclass.php';
+// require_once '../../dist/php/verification.php';
+
+// Créer une instance de la classe Customer
+$customerInstance = new Customer();
+
+// Vérifier si le formulaire a été soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Récupérer les données du formulaire pour le client
-    $name = $_POST["name"];
-    $prenom = $_POST["prenom"];
-    $email = $_POST["email"];
-    $phone = $_POST["phone"];
-    $adress = $_POST["adress"];
-    $commentary = $_POST["commentaire"];
+    // Appeler la méthode pour insérer les données du client et récupérer l'ID du client
+    $customerId = $customerInstance->insertCustomer($_POST);
 
-    // Connexion à la base de données en utilisant MySQLi
-    $serveur = "localhost"; // Remplacez localhost par l'adresse de votre serveur
-    $user = "root"; // Remplacez par votre nom d'utilisateur
-    $pass = "root"; // Remplacez par votre mot de passe
-    $dbname = "toilettage"; // Remplacez par le nom de votre base de données
+    if ($customerId !== false) {
+        // Créer une instance de la classe Animal
+        $animalInstance = new Animal();
 
-    $connexion = new mysqli($serveur, $user, $pass, $dbname);
+        // Appeler la méthode pour insérer les données de l'animal avec l'ID du client
+        $animalInsertResult = $animalInstance->insertAnimal($_POST, $customerId);
 
-    // Vérifier la connexion
-    if ($connexion->connect_error) {
-        die("La connexion a échoué : " . $connexion->connect_error);
-    }
-    var_dump($_POST);
-
-    // Préparez et exécutez la requête d'insertion pour le client
-    $insertClientQuery = "INSERT INTO customers (firstname, lastname, telephone, mail, postal_adress, commentary) VALUES ('$name', '$prenom', '$phone', '$email', '$adress', '$commentary')";
-    if ($connexion->query($insertClientQuery) === TRUE) {
-        // Récupérer l'ID du client nouvellement inséré
-        $clientId = $connexion->insert_id;
-
-        // Vérifier si le formulaire pour les animaux est rempli
-        if (!empty($_POST["nameDog"]) && !empty($_POST["race"])) {
-            // Récupérer les données du formulaire pour l'animal
-            $namedog = $_POST["nameDog"];
-            $race = $_POST["race"];
-            $age = $_POST["age"];
-            $poids = $_POST["poids"];
-            $taille = $_POST["taille"];
-            $commentairedog = $_POST["commentairedog"];
-
-            // Préparez et exécutez la requête d'insertion pour l'animal avec la clé étrangère
-            $insertAnimalQuery = "INSERT INTO animals (`name`, `breed`, `age`, `weight`, `height`, `comment`, `customer_id`) VALUES ('$namedog', '$race', '$age', '$poids', '$taille', '$commentairedog', '$clientId')";
-            if ($connexion->query($insertAnimalQuery) === TRUE) {
-                echo "Données insérées dans la base de données avec succès.";
-            } else {
-                echo "Erreur lors de l'insertion des données de l'animal : " . $connexion->error;
-            }
+        // Afficher le résultat
+        if ($animalInsertResult) {
+            echo "Données insérées dans la base de données avec succès.";
         } else {
-            echo "Aucune information sur l'animal fournie. Seuls les détails du client ont été enregistrés.";
+            echo "Données du client seul insérées.";
         }
     } else {
-        echo "Erreur lors de l'insertion des données du client : " . $connexion->error;
+        echo "Erreur lors de l'insertion des données du client.";
     }
-
-    // Fermez la connexion à la base de données
-    $connexion->close();
 }
 ?>
 <!DOCTYPE html>

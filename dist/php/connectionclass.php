@@ -1,23 +1,22 @@
 <?php
-$serveur = "localhost"; // Remplacez localhost par l'adresse de votre serveur
-$user = "root"; // Remplacez par votre nom d'utilisateur
-$pass = "root"; // Remplacez par votre mot de passe
-$dbname = "toilettage"; // Remplacez par le nom de votre base de données
+class Connexion {
+ 
+    public $host = "localhost";
+    public $username = "root";
+    public $password = "root";
+    public $database = "toilettage";
+    public $conn;
+ 
+    function __construct() {
+        $this->conn = new mysqli($this->host, $this->username, $this->password, $this->database);
+        if ($this->conn->connect_error) {
+            die("Database connection failed: " . $this->conn->connect_error);
+        }
+    }
 
-// Connexion à la base de données
-$connexion = new mysqli($serveur, $user, $pass, $dbname);
-
-// Vérifier la connexion
-if ($connexion->connect_error) {
-    die("La connexion a échoué : " . $connexion->connect_error);
+    // Méthode pour exécuter les requêtes SQL
+    public function query($sql) {
+        return $this->conn->query($sql);
+    }
 }
-
-session_start();
-if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
-    // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
-    header("Location: login.php");
-    exit;
-}
-// Le nom d'utilisateur est stocké dans $_SESSION["username"]
-$nomUtilisateur = $_SESSION["username"];
 ?>
