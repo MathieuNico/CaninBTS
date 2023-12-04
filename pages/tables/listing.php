@@ -56,13 +56,32 @@ $userInstance = new User();
 // Récupérer tous les services
 $users = $userInstance->getAll();
 
+// Récupère les données de la table 'user'
+require_once '../../dist/php/appointementsclass.php';
+
+// Créer une instance de la classe Services
+$appointementInstance = new Appointment();
+
+// Récupérer tous les services
+$appointements = $appointementInstance->getAll();
+
 // Afficher les services permet de voir les données transmise
-//foreach ($services as $service) {
-//    echo "ID : " . $service->id . "<br>";
-//    echo "Nom : " . $service->name . "<br>";
-//    echo "Prix : " . $service->price . "<br>";
-//    echo "-----------------------<br>";
-//}
+foreach ($appointements as $appointement) {
+    echo "numeros rdv : " . $appointement->id . "<br>";
+    echo "debut : " . $appointement->date_start . "<br>";
+    echo "fin : " . $appointement->date_end . "<br>";
+    echo "payée : " . $appointement->is_paid . "<br>";
+    echo "employer : " . $appointement->user_id . "<br>";
+    echo "animal : " . $appointement->animal_id . "<br>";
+    echo "Service : " . $appointement->service_id . "<br>";
+    
+}
+// Vérifier si la classe a été incluse
+if (class_exists('Services')) {
+  echo "La classe Services a été incluse avec succès.";
+} else {
+  echo "Erreur lors de l'inclusion de la classe Services.";
+}
 
 ?>
 
