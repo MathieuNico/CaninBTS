@@ -13,7 +13,7 @@ class Animal {
     public $age;
     public $weight;
     public $height;
-    public $commentary;
+    public $comment;
     public $customer_id;
  
     function __construct($animal_bdd = NULL) {
@@ -25,7 +25,7 @@ class Animal {
             $this->age = $animal_bdd['age'];
             $this->weight = $animal_bdd['weight'];
             $this->height = $animal_bdd['height'];
-            $this->commentary = $animal_bdd['commentary'];
+            $this->comment = $animal_bdd['comment'];
             $this->customer_id = $animal_bdd['customer_id'];
         }
     }

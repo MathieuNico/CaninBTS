@@ -3,12 +3,28 @@
 // Récupère les données de la table 'animals'
 require_once '../../dist/php/animalsclass.php';
 
-// Récupère les données de la table 'customers'
+// Créer une instance de la classe animals
+   $animalInstance = new Animal();
+
+// Récupérer tous les clients
+   $animals = $animalInstance->getAll();
+
+
+// Inclure la classe Customer
 require_once '../../dist/php/customerclass.php';
+
+// ... (autres inclusions et code) ...
+
+// Créer une instance de la classe Customer
+$customerInstance = new Customer();
+
+// Récupérer tous les clients
+$customers = $customerInstance->getAll();
+
+
 
 // Récupère les données de la table 'services'
 require_once '../../dist/php/servicesclass.php';
-
 
 // Créer une instance de la classe Services
 $servicesInstance = new Services();
@@ -31,8 +47,22 @@ $services = $servicesInstance->getAll();
 //  echo "Erreur lors de l'inclusion de la classe Services.";
 //}
 
-// Récupère les données de la table 'users'
+// Récupère les données de la table 'user'
+require_once '../../dist/php/usersclass.php';
 
+// Créer une instance de la classe Services
+$userInstance = new User();
+
+// Récupérer tous les services
+$users = $userInstance->getAll();
+
+// Afficher les services permet de voir les données transmise
+//foreach ($services as $service) {
+//    echo "ID : " . $service->id . "<br>";
+//    echo "Nom : " . $service->name . "<br>";
+//    echo "Prix : " . $service->price . "<br>";
+//    echo "-----------------------<br>";
+//}
 
 ?>
 
@@ -226,23 +256,22 @@ $services = $servicesInstance->getAll();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    // Affiche les données dans le tableau
-                                    if ($result->num_rows > 0) {
-                                        while ($row = $result->fetch_assoc()) {
+                                <?php
+                                    if (!empty($animals)) {
+                                        foreach ($animals as $animal) {
                                             echo "<tr>";
-                                            echo "<td>" . $row["id"] . "</td>";
-                                            echo "<td>" . $row["name"] . "</td>";
-                                            echo "<td>" . $row["breed"] . "</td>";
-                                            echo "<td>" . $row["age"] . "</td>";
-                                            echo "<td>" . $row["weight"] . "</td>";
-                                            echo "<td>" . $row["height"] . "</td>";
-                                            echo "<td>" . $row["comment"] . "</td>";
-                                            echo "<td>" . $row["customer_id"] . "</td>";
+                                            echo "<td>" . $animal->id . "</td>";
+                                            echo "<td>" . $animal->name . "</td>";
+                                            echo "<td>" . $animal->breed . "</td>";
+                                            echo "<td>" . $animal->age . "</td>";
+                                            echo "<td>" . $animal->weight . "</td>";
+                                            echo "<td>" . $animal->height . "</td>";
+                                            echo "<td>" . $animal->comment. "</td>";
+                                            echo "<td>" . $animal->customer_id. "</td>";
                                             echo "</tr>";
                                         }
                                     } else {
-                                        echo "<tr><td colspan='8'>Aucun animal trouvé</td></tr>";
+                                        echo "<tr><td colspan='7'>Aucun animal trouvé</td></tr>";
                                     }
                                     ?>
                                 </tbody>
@@ -290,16 +319,16 @@ $services = $servicesInstance->getAll();
                                 </thead>
                                 <tbody>
                                     <?php
-                                    if ($result_customers->num_rows > 0) {
-                                        while ($row_customers = $result_customers->fetch_assoc()) {
+                                    if (!empty($customers)) {
+                                        foreach ($customers as $customer) {
                                             echo "<tr>";
-                                            echo "<td>" . $row_customers["id"] . "</td>";
-                                            echo "<td>" . $row_customers["firstname"] . "</td>";
-                                            echo "<td>" . $row_customers["lastname"] . "</td>";
-                                            echo "<td>" . $row_customers["mail"] . "</td>";
-                                            echo "<td>" . $row_customers["telephone"] . "</td>";
-                                            echo "<td>" . $row_customers["postal_adress"] . "</td>";
-                                            echo "<td>" . $row_customers["commentary"] . "</td>";
+                                            echo "<td>" . $customer->id . "</td>";
+                                            echo "<td>" . $customer->firstname . "</td>";
+                                            echo "<td>" . $customer->lastname . "</td>";
+                                            echo "<td>" . $customer->mail . "</td>";
+                                            echo "<td>" . $customer->telephone . "</td>";
+                                            echo "<td>" . $customer->postal_adress . "</td>";
+                                            echo "<td>" . $customer->commentary . "</td>";
                                             echo "</tr>";
                                         }
                                     } else {
@@ -387,48 +416,48 @@ $services = $servicesInstance->getAll();
                         <div class="card-body">
                             <table id="example2_users" class="table table-bordered table-hover">
                             <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Prénom</th>
-                                        <th>Nom</th>
-                                        <th>Téléphone</th>
-                                        <th>Email</th>
-                                        <th>Adresse</th>
-                                        <th>Mot de passe</th>
-                                        <th>Admin</th>
-                                    </tr>
+                              <tr>
+                                <th>ID</th>
+                                <th>Admin</th>
+                                <th>Prénom</th>
+                                <th>Nom</th>
+                                <th>Téléphone</th>
+                                <th>Email</th>
+                                <th>Adresse</th>
+                                <th>Mot de passe</th>  
+                              </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    if ($result_users->num_rows > 0) {
-                                        while ($row_users = $result_users->fetch_assoc()) {
-                                            echo "<tr>";
-                                            echo "<td>" . $row_users["id"] . "</td>";
-                                            echo "<td>" . $row_users["firstname"] . "</td>";
-                                            echo "<td>" . $row_users["lastname"] . "</td>";
-                                            echo "<td>" . $row_users["telephone"] . "</td>";
-                                            echo "<td>" . $row_users["mail"] . "</td>";
-                                            echo "<td>" . $row_users["postal_adress"] . "</td>";
-                                            echo "<td>" . $row_users["mdp"] . "</td>";
-                                            echo "<td>" . ($row_users["is_admin"] == 1 ? 'Oui' : 'Non') . "</td>";
-                                            echo "</tr>";
+                                    if (!empty($users)) {
+                                        foreach ($users as $user) {
+                                          echo "<tr>";
+                                          echo "<td>" . $user->id . "</td>";
+                                          echo "<td>" . $user->idisadmin . "</td>";
+                                          echo "<td>" . $user->firstname . "</td>";
+                                          echo "<td>" . $user->lastname . "</td>";
+                                          echo "<td>" . $user->telephone . "</td>";
+                                          echo "<td>" . $user->email . "</td>";
+                                          echo "<td>" . $user->address . "</td>";
+                                          echo "<td>" . $user->password . "</td>";
+                                          echo "</tr>";
                                         }
                                     } else {
-                                        echo "<tr><td colspan='8'>Aucun utilisateur trouvé</td></tr>";
+                                        echo "<tr><td colspan='9'>Aucun utilisateur trouvé</td></tr>";
                                     }
                                     ?>
                                 </tbody>
                                 <tfoot>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Prénom</th>
-                                        <th>Nom</th>
-                                        <th>Téléphone</th>
-                                        <th>Email</th>
-                                        <th>Adresse</th>
-                                        <th>Mot de passe</th>
-                                        <th>Admin</th>
-                                    </tr>
+                                  <tr>
+                                      <th>ID</th>
+                                      <th>Admin</th>
+                                      <th>Prénom</th>
+                                      <th>Nom</th>
+                                      <th>Téléphone</th>
+                                      <th>Email</th>
+                                      <th>Adresse</th>
+                                      <th>Mot de passe</th>
+                                  </tr>
                                 </tfoot>
                             </table>
                         </div>
