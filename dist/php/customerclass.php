@@ -1,9 +1,14 @@
 <?php
+
+// require_once 'include/session.php';
+require_once 'connectionclass.php';
+
 class Customer {
     public $connexion;
     public $id;
     public $firstname;
     public $lastname;
+    public $mail;
     public $telephone;
     public $postal_adress;
     public $commentary;
@@ -14,6 +19,7 @@ class Customer {
             $this->id = $customer_bdd['id'];
             $this->firstname = $customer_bdd['firstname'];
             $this->lastname = $customer_bdd['lastname'];
+            $this->mail = $customer_bdd['mail'];
             $this->telephone = $customer_bdd['telephone'];
             $this->postal_adress = $customer_bdd['postal_adress'];
             $this->commentary = $customer_bdd['commentary'];
