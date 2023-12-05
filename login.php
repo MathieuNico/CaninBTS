@@ -1,35 +1,20 @@
 <?php
 session_start();
-
+ 
+require_once 'dist/php/connectionclass.php';
+require_once 'dist/php/userclass.php';
+ 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $serveur = "localhost";
-    $dbname = "toilettage";
-    $user = "root";
-    $pass = "root";
-
-    $firstname = $_POST["firstname"];
-    $mdp = $_POST["mdp"];
-
-    try {
-        $connexion = new PDO("mysql:host=$serveur;dbname=$dbname", $user, $pass);
-        $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        $requete = $connexion->prepare("SELECT * FROM users WHERE firstname = :firstname AND mdp = :mdp");
-        $requete->bindParam(':firstname', $firstname);
-        $requete->bindParam(':mdp', $mdp);
-        $requete->execute();
-
-        if ($requete->rowCount() == 1) {
-            $_SESSION["isLoggedIn"] = true;
-            $_SESSION["username"] = $firstname;
-            header("Location:index.php");
-            exit();
-        } else {
-            header("Location: login.php?error=1");
-            exit();
-        }
-    } catch (PDOException $e) {
-        echo "Erreur : " . $e->getMessage();
+    $user = new User();
+    $username = $_POST["firstname"];
+    $password = $_POST["mdp"];
+ 
+    if ($user->authenticateUser($username, $password)) {
+        header("Location:index.php");
+        exit();
+    } else {
+        header("Location: login.php?error=1");
+        exit();
     }
 }
 ?>

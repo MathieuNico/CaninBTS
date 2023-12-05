@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const data = {
+    labels: [<?php echo json_encode(array_column($getage, 'name'))?>],
+    datasets: [{
+      label:'Quantité',
+      data: <?php echo json_encode(array_column($getage, 'count'))?>,
+      backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)', 'rgb(255, 40, 200'],
+      hoverOffset: 4
+    }
+    ]
+
+  };
+
+  const config = {
+    type: 'doughnut',
+    data:data,
+  };
+
+  const myChart = new Chart(
+    document.getElementById('donutChart'),
+    config
+  );
+
+
+</script>
+    
+
+<!-- SCRIPT DIAGRAMME SERVICE -->  
+
+<script>
+  const ctx = document.getElementById('lineChart');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: <?php echo json_encode($service)?>,
+      datasets: [{
+        label: 'Nombre de Rendez vous actuel',
+        data: <?php echo json_encode($linedonne)?>,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        } 
+      }
+    }
+  });
+</script>
+<!-- SCRIPT DIAGRAMME POIDS -->
+<script>
+  const barchat = document.getElementById('barChart');
+
+  new Chart(barchat, {
+    type: 'bar',
+    data: {
+      labels: <?php echo json_encode($category)?>,
+      datasets: [{
+        label: ['Résumé Poids'],
+        data: <?php echo json_encode($poid)?>,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(153, 102, 255, 0.2)'
+        ],
+        borderColor: [
+          'rgb(255, 99, 132)',
+          'rgb(255, 159, 64)',
+          'rgb(153, 102, 255)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        } 
+      }
+    }
+  });
+</script>
+

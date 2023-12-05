@@ -29,6 +29,21 @@ class Services {
         }
         return $services;
     }
+    
+    public function getName(){
+        $name_service = mysqli_query($this->connexion->conn,"SELECT services.name AS nom_service, COUNT(*) AS number_service FROM services JOIN appointments ON appointments.service_id = services.id GROUP BY services.name;");
+        if (!$name_service) {
+            die("Database query failed.");
+        }
+        $serv = [];
+        while ($name_service_bdd = mysqli_fetch_assoc($name_service)) {
+            $serv[] = [
+                'name_service' => $name_service_bdd['nom_service'],
+                'number_service' => $name_service_bdd['number_service'],
+            ];
+        }
+        return $serv;
+    }
 
 }
 

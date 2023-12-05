@@ -14,7 +14,6 @@ class Connexion {
         }
     }
 
-    // Méthode pour exécuter les requêtes SQL
     public function query($sql) {
         return $this->conn->query($sql);
     }
