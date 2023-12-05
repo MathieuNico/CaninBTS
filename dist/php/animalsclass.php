@@ -56,6 +56,58 @@ class Animal {
         }
         return $animals;
     }
-}
+
+    public function getBreedData() {
+        $query = "SELECT breed, COUNT(*) as count FROM animals GROUP BY breed";
+        $result = mysqli_query($this->connexion->conn, $query);
+        if (!$result) {
+            die("Database query failed.");
+        }
  
+        $breedData = [];
+        while ($data = mysqli_fetch_assoc($result)) {
+            $breedData[] = [
+                'breed' => $data['breed'],
+                'count' => $data['count'],
+            ];
+        }
+        return $breedData;
+    }
+
+    public function getagedata(){
+        $age = "SELECT CASE WHEN age > 10 THEN 'Chien agé' WHEN age >= 5 AND age <= 10 THEN 'Entre 5 et 10 ans' WHEN age < 5 THEN '< 5 ans' END AS category_age, COUNT(*) AS number_animal_age FROM animals GROUP BY category_age";
+        $resultage = mysqli_query($this->connexion->conn, $age);
+        if (!$resultage) {
+            die("Database query failed.");
+        }
+        $ageData = [];
+        while ($datage = mysqli_fetch_assoc($resultage)){
+            $ageData[] = [
+                'age' => $datage['number_animal_age'],
+                'resu' => $datage['category_age'],
+            ];
+        }
+        return $ageData;
+        // Affecte Donnée de la requête pour Diagramme Race à la variable $donne
+    }
+
+    public function getweight(){
+        $weight = "SELECT CASE WHEN weight > 30 AND weight < 50 THEN 'Poids normal' WHEN weight >= 50 THEN 'Poids élevé' WHEN weight <= 30 THEN 'Poids léger' END AS category_weight, COUNT(*) AS number_animal FROM animals GROUP BY category_weight";
+        $resuweight = mysqli_query($this->connexion->conn, $weight);
+        if(!$resuweight){
+            die("Database query failed.");
+        }
+        $weightdata = [];
+        while ($datweight = mysqli_fetch_assoc($resuweight)){
+            $weightdata[] = [
+                'weight' => $datweight['number_animal'],
+                'category' => $datweight['category_weight'],
+            ];
+        }
+        return $weightdata;
+
+    }
+
+    
+}
 ?>
