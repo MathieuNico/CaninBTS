@@ -19,7 +19,6 @@ class Connexion {
         return $this->pdo;
     }
 
-    // Méthode pour exécuter les requêtes SQL
     public function query($sql) {
         return $this->pdo->query($sql);
     }

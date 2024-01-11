@@ -1,61 +1,64 @@
 <?php
-$serveur = "localhost"; // Remplacez localhost par l'adresse de votre serveur
-$user = "root"; // Remplacez par votre nom d'utilisateur
-$pass = "root"; // Remplacez par votre mot de passe
-$dbname = "toilettage"; // Remplacez par le nom de votre base de données
+session_start();
+require_once('../../dist/php/animalsclass.php');
+require_once('../../dist/php/connectionclass.php');
+require_once('../../dist/php/servicesclass.php');
+
 
 // Connexion à la base de données
-$connexion = new mysqli($serveur, $user, $pass, $dbname);
+$connexion = new Connexion();
+$animal = new Animal();
+$getbreed = $animal->getBreedData();
+$getage = $animal->getagedata();
+$getweight = $animal->getweight();
+$service = new Services();
+$getservice = $service->getName();
 
 // Vérifier la connexion
 if ($connexion->connect_error) {
     die("La connexion a échoué : " . $connexion->connect_error);
 }
 
-session_start();
 if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
     // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 // Le nom d'utilisateur est stocké dans $_SESSION["username"]
 $nomUtilisateur = $_SESSION["username"];
 
-// Requête pour Diagramme Race
-$req = mysqli_query($connexion,"SELECT COUNT(*) as count FROM animals WHERE breed IN ('Golden Retriever', 'Labrador Retriever','Bulldog','German Shepherd') GROUP BY breed;");
+
 // Requêtre pour Diagramme Service
-$req2 = mysqli_query($connexion,"SELECT service_id, COUNT(user_id) AS nombredemploye FROM capabilities GROUP BY service_id;");
-$reqserv = mysqli_query($connexion,"SELECT name, id FROM services;");
+//$req2 = mysqli_query($connexion,"SELECT service_id, COUNT(user_id) AS nombredemploye FROM capabilities GROUP BY service_id;");
+//$reqserv = mysqli_query($connexion,"SELECT name, id FROM services;");
 // Requête pour Diagramme Poids
-$reqcategory = mysqli_query($connexion,"SELECT CASE WHEN weight > 30 AND weight < 50 THEN 'Poids normal' WHEN weight >= 50 THEN 'Poids élevé' WHEN weight <= 30 THEN 'Poids léger' END AS category_weight, COUNT(*) AS number_animal FROM animals GROUP BY category_weight;");
 // Requête pour Diagramme Age
-$reqage = mysqli_query($connexion,"SELECT CASE WHEN age > 10 THEN 'Chien agé' WHEN age >= 5 AND age <= 10 THEN 'Entre 5 et 10 ans' WHEN age < 5 THEN '< 5 ans' END AS category_age, COUNT(*) AS number_animal_age FROM animals GROUP BY category_age;");
+
 
 // Affecte Donnée de la requête pour Diagramme Race à la variable $donne
-foreach($req as $data){
-  $donne[]= $data['count'];
-}
-// Affecte Donnée de la requête pour Diagramme Service à la variable $linedonne et $service
-foreach($req2 as $data){
-  $linedonne[]= $data['nombredemploye'];
-}
-foreach($reqserv as $data){
-  $service[] = $data['name'];
-}
-// affecte Donnée de la requête pour Diagramme Poids à la variable $category et $poid
-foreach($reqcategory as $data){
-  $category[] = $data['category_weight'];
-  $poid[] = $data['number_animal'];
-}
-// Affecte Donnée de la requête pour Diagramme Age à la variable $categoage et $age
-foreach($reqage as $data){
-  $categoage[] = $data['category_age'];
-  $age[] = $data['number_animal_age'];
+// foreach($req as $data){
+//   $donne[]= $data['count'];
+// }
+// // Affecte Donnée de la requête pour Diagramme Service à la variable $linedonne et $service
+// foreach($req2 as $data){
+//   $linedonne[]= $data['nombredemploye'];
+// }
+// foreach($reqserv as $data){
+//   $service[] = $data['name'];
+// }
+// // affecte Donnée de la requête pour Diagramme Poids à la variable $category et $poid
+// foreach($reqcategory as $data){
+//   $category[] = $data['category_weight'];
+//   $poid[] = $data['number_animal'];
+// }
+// // Affecte Donnée de la requête pour Diagramme Age à la variable $categoage et $age
+// foreach($reqage as $data){
+//   $categoage[] = $data['category_age'];
+//   $age[] = $data['number_animal_age'];
 
-}
+// }
 
-// Fermer la connexion
-$connexion->close();
+$connexion->conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -315,10 +318,10 @@ $connexion->close();
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const data = {
-      labels: ['Golden Retriever','Labrador Retriever','Bulldog','German Shepperd'],
+      labels: <?php echo json_encode(array_column($getbreed, 'breed'))?>,
       datasets: [{
         label:'Quantité',
-        data: <?php echo json_encode($donne)?>,
+        data: <?php echo json_encode(array_column($getbreed, 'count'))?>,
         backgroundColor: ['rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)', 'rgb(255, 40, 200'],
         hoverOffset: 4
       }
@@ -338,101 +341,102 @@ $connexion->close();
 
   
   </script>
+  <script>
+  const barage = document.getElementById('areaChart');
+
+  new Chart(barage, {
+    type: 'bar',
+    data: {
+      labels: <?php echo json_encode(array_column($getage, 'resu'))?>,
+      datasets: [{
+        label: ['Résumé Age'],
+        data: <?php echo json_encode(array_column($getage, 'age'))?>,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(153, 102, 255, 0.2)'
+        ],
+        borderColor: [
+          'rgb(255, 99, 132)',
+          'rgb(255, 159, 64)',
+          'rgb(153, 102, 255)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      scales: {
+        x: {
+          beginAtZero: true
+        } 
+      }
+    }
+  });
+  </script>
       
+    <script>
+  const barchat = document.getElementById('barChart');
+
+  new Chart(barchat, {
+    type: 'bar',
+    data: {
+      labels: <?php echo json_encode(array_column($getweight, 'category'))?>,
+      datasets: [{
+        label: ['Résumé Poids'],
+        data: <?php echo json_encode(array_column($getweight, 'weight'))?>,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(153, 102, 255, 0.2)'
+        ],
+        borderColor: [
+          'rgb(255, 99, 132)',
+          'rgb(255, 159, 64)',
+          'rgb(153, 102, 255)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        } 
+      }
+    }
+  });
+  </script>
+  <script>
+  const ctx = document.getElementById('lineChart');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: <?php echo json_encode(array_column($getservice, 'name_service'))?>,
+      datasets: [{
+        label: 'Nombre de Rendez vous actuel',
+        data: <?php echo json_encode(array_column($getservice, 'number_service'))?>,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        } 
+      }
+    }
+  });
+</script>
   
 <!-- SCRIPT DIAGRAMME SERVICE -->  
 
-  <script>
-    const ctx = document.getElementById('lineChart');
-
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: <?php echo json_encode($service)?>,
-        datasets: [{
-          label: 'Nombre de Rendez vous actuel',
-          data: <?php echo json_encode($linedonne)?>,
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          } 
-        }
-      }
-    });
-  </script>
+ 
 <!-- SCRIPT DIAGRAMME POIDS -->
-  <script>
-    const barchat = document.getElementById('barChart');
-
-    new Chart(barchat, {
-      type: 'bar',
-      data: {
-        labels: <?php echo json_encode($category)?>,
-        datasets: [{
-          label: ['Résumé Poids'],
-          data: <?php echo json_encode($poid)?>,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-            'rgba(153, 102, 255, 0.2)'
-          ],
-          borderColor: [
-            'rgb(255, 99, 132)',
-            'rgb(255, 159, 64)',
-            'rgb(153, 102, 255)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          } 
-        }
-      }
-    });
-  </script>
-
+ 
 <!-- SCRIPT DIAGRAMME AGE -->
-  <script>
-    const barage = document.getElementById('areaChart');
-
-    new Chart(barage, {
-      type: 'bar',
-      data: {
-        labels: <?php echo json_encode($categoage)?>,
-        datasets: [{
-          label: ['Résumé Age'],
-          data: <?php echo json_encode($age)?>,
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-            'rgba(153, 102, 255, 0.2)'
-          ],
-          borderColor: [
-            'rgb(255, 99, 132)',
-            'rgb(255, 159, 64)',
-            'rgb(153, 102, 255)'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        scales: {
-          x: {
-            beginAtZero: true
-          } 
-        }
-      }
-    });
-  </script>
-
+  
     
 
   <script src="../../plugins/jquery/jquery.min.js"></script>
