@@ -176,7 +176,7 @@ $connexion->conn->close();
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/examples/projects.html" class="nav-link">
+            <a href="pages/examples/projects.php" class="nav-link">
               <i class="nav-icon fas fa-book"></i>
               <p>Admin</p>
             </a>

@@ -21,7 +21,7 @@ if ($connexion->connect_error) {
 
 if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
     // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 // Le nom d'utilisateur est stocké dans $_SESSION["username"]
