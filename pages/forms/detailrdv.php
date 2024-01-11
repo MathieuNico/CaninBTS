@@ -1,11 +1,123 @@
 <?php
-
 require_once '../../dist/php/verification.php';
 require_once '../../dist/php/customerclass.php';
 require_once '../../dist/php/animalsclass.php';
-// Fermer la connexion à la base de données
-// $connexion->close();
 
+$appointmentId = isset($_GET['id']) ? $_GET['id'] : null;
+
+// Créer une instance de la classe Customer
+$customerInstance = new Customer();
+
+// Récupérer les détails du rendez-vous
+$appointmentDetails = $customerInstance->getAppointmentDetails($appointmentId);
+
+// Faire quelque chose avec les détails du rendez-vous
+if (!$appointmentDetails) {
+    // Gérer le cas où le rendez-vous n'est pas trouvé
+    die("Rendez-vous non trouvé.");
+}
+
+// Remplacez les valeurs suivantes par les informations de votre base de données
+$serveur = "localhost";
+$utilisateur = "root";
+$motDePasse = "root";
+$baseDeDonnees = "toilettage";
+
+// Vérifier la connexion
+$connexion = new mysqli($serveur, $utilisateur, $motDePasse, $baseDeDonnees);
+
+// Vérifier la connexion
+if ($connexion->connect_error) {
+    die("Échec de la connexion : " . $connexion->connect_error);
+}
+
+// Formater la date au format "dd/mm/yyyy hh:mm"
+$formattedDateStart = date('Y-m-d\TH:i', strtotime($appointmentDetails['date_start']));
+
+// Vérifier si le formulaire a été soumis
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Assurez-vous que le champ 'appointment_id' existe dans $_POST
+    if (isset($_POST['appointment_id'])) {
+        // Récupérer les données du formulaire
+        $appointmentId = $_POST['appointment_id'];
+        $dateStart = $_POST['date_start'];
+        $dateEnd = $_POST['date_end'];
+        // Ajoutez d'autres champs de formulaire selon vos besoins
+
+        // Préparez la requête de mise à jour
+        $updateSql = "UPDATE appointments SET date_start=?, date_end=? WHERE id=?";
+        $stmt = $connexion->prepare($updateSql);
+
+        // Vérifiez si la préparation de la requête a réussi
+        if ($stmt) {
+            // Liez les paramètres à la requête
+            $stmt->bind_param("ssi", $dateStart, $dateEnd, $appointmentId);
+
+            // Exécutez la requête
+            $stmt->execute();
+
+            // Fermez la requête préparée
+            $stmt->close();
+
+            // Fermer la connexion à la base de données
+            $connexion->close();
+
+            // Redirigez l'utilisateur vers une page de confirmation ou une autre page après la mise à jour
+            header("Location: ../../pages/php/verification.php");
+            exit();
+        } else {
+            echo "Erreur de préparation de la requête : " . $connexion->error;
+        }
+    }
+}
+
+// Requête SQL avec alias pour éviter les conflits de noms de colonnes
+$sql = "SELECT 
+    appointments.id, 
+    appointments.is_paid as is_paid, 
+    appointments.date_start as start, 
+    appointments.date_end as end, 
+    animals.name as animal_name, 
+    services.name as service_name, 
+    users.firstname 
+FROM appointments
+INNER JOIN animals ON appointments.animal_id = animals.id
+INNER JOIN services ON appointments.service_id = services.id
+INNER JOIN users ON appointments.user_id = users.id
+WHERE appointments.id = $appointmentId";
+
+$resultat = $connexion->query($sql);
+
+// Vérifier si la requête a réussi
+if ($resultat) {
+    // Récupérer la première ligne du résultat
+    $row = $resultat->fetch_assoc();
+
+    // Formater les dates en utilisant strtotime
+    $row['start'] = date('Y-m-d H:i:s', strtotime($row['start']));
+    $row['end'] = date('Y-m-d H:i:s', strtotime($row['end']));
+
+    // Récupérer les informations individuelles
+    $isPaid = $row['is_paid'];
+    $animalName = $row['animal_name'];
+    $serviceName = $row['service_name'];
+    $userName = $row['firstname'];
+
+    // Fermer la connexion à la base de données
+    $connexion->close();
+
+    // Convertir le tableau en format JSON
+    $final_array = json_encode($row);
+} else {
+    echo "Erreur de requête : " . $connexion->error;
+}
+
+// // Afficher le résultat
+// echo("<pre>");
+// echo("<code>");
+// echo $final_array;
+// echo("</code>");
+// echo("</pre>");
 ?>
 
 <!DOCTYPE html>
@@ -169,103 +281,54 @@ require_once '../../dist/php/animalsclass.php';
 
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row-inscription">
-          <!-- left column -->
-          <div class="col-md-12">
-            <!-- general form elements -->
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">Modification des informations client</h3>
-              </div>
-              <!-- /.card-header -->
-              <!-- form start -->
+    <div class="container-fluid">
+      <div class="row-inscription">
+        <div class="col-md-12">
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Modification des informations client</h3>
+            </div>
               <form method="post" class="customer-form">
-                <div class="card-body">
-                  <div class="form-group">
-                    <label for="name">Rechercher un client</label>
-                    <input type="texte" class="form-control" name="search" id="name" placeholder="Entrez votre recherche">
+                  <div class="card-body">
+                      <!-- Afficher les détails du rendez-vous -->
+                      <?php if (isset($appointmentDetails)): ?>
+                          <div>
+                              <input type="hidden" name="appointment_id" value="<?php echo $appointmentDetails['id']; ?>">
+                              <div class="form-group">
+                                  <label for="date_start">Date de début:</label>
+                                  <input type="datetime-local" class="form-control" name="date_start" value="<?php echo $formattedDateStart; ?>">
+                              </div>
+                              <div class="form-group">
+                                  <label for="date_end">Date de fin:</label>
+                                  <input type="datetime-local" class="form-control" name="date_end" value="<?php echo $appointmentDetails['date_end']; ?>">
+                              </div>
+                              <div class="form-group">
+                                  <label for="is_paid">Payé:</label>
+                                  <input type="text" class="form-control" name="is_paid" value="<?php echo ($isPaid == 1) ? 'Payé' : 'Non payé'; ?>" readonly>
+                              </div>
+                              <div class="form-group">
+                                  <label for="user_name">Employé:</label>
+                                  <input type="text" class="form-control" name="user_name" value="<?php echo $userName ?>" readonly>
+                              </div>
+                              <div class="form-group">
+                                  <label for="animal_name">Animal:</label>
+                                  <input type="text" class="form-control" name="animal_name" value="<?php echo $animalName ?>" readonly>
+                              </div>
+                              <div class="form-group">
+                                  <label for="service_name">Service:</label>
+                                  <input type="text" class="form-control" name="service_name" value="<?php echo $serviceName ?>" readonly>
+                              </div>
+                              <!-- Ajoutez d'autres champs de formulaire pour d'autres détails du rendez-vous -->
+                          </div>
+                      <?php endif; ?>
                   </div>
-                  <button id="blockBtn3" style="display: block" class="btn btn-primary">Rechercher</button>
+                  <button type="submit" class="btn btn-secondary">Envoyer</button>
               </form>
-
-
-              <?php
-              // Créer une instance de la classe Customer
-$customerInstance = new Customer();
-//Vérifier si le formulaire a été soumis
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  // Récupérer les données du formulaire
-  $searchData = array('search' => $_POST['search']);
-
-  // Appeler la fonction de recherche
-  $results = $customerInstance->searchCustomer($searchData);
-
-  // Afficher les résultats sous forme de tableau HTML
-  if (!empty($results)) {
-      echo '<table border="1">
-              <tr>
-                  <th>Customer ID</th>
-                  <th>Customer Mail</th>
-                  <th>Customer Lastname</th>
-                  <th>Animal ID</th>
-                  <th>Animal Name</th>
-              </tr>';
-
-      foreach ($results as $result) {
-          echo '<tr>
-                  <td>' . $result['customer']['id'] . '</td>
-                  <td>' . $result['customer']['mail'] . '</td>
-                  <td>' . $result['customer']['lastname'] . '</td>
-                  <td>' . $result['animal']['id'] . '</td>
-                  <td>' . $result['animal']['name'] . '</td>
-              </tr>';
-      }
-
-      echo '</table>';
-  } else {
-      echo 'Aucun résultat trouvé.';
-  }
-}
-?>
-            </div>
           </div>
         </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-    <!-- Main content -->
-    <section class="content">
-      <!-- Div à cacher -->
-      <div id="d1" style="display: none" >
-      <div class="container-fluid">
-        <div class="row-inscription">
-          <!-- left column -->
-          <div class="col-md-12">
-            <!-- general form elements -->
-            <div class="card card-success">
-              <div class="card-header">
-                <h3 class="card-title">Votre Chien</h3>
-              </div>
-              <!-- /.card-header -->
-              <!-- form start -->
-              <form method="post" class="animal-form">
-                <div class="card-body">
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                  <button type="submit" onclick="submitBothForms()" class="btn btn-secondary">Envoyer</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-        <!-- /.Div à cacher -->
       </div>
-    </section>
+    </div>
+  </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->

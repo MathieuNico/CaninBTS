@@ -1,7 +1,6 @@
 <?php
 require_once '../../dist/php/customerclass.php';
-require_once '../../dist/php/animalsclass.php';
-// require_once '../../dist/php/verification.php';
+require_once '../../dist/php/verification.php';
 
 // Créer une instance de la classe Customer
 $customerInstance = new Customer();
@@ -11,24 +10,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Appeler la méthode pour insérer les données du client et récupérer l'ID du client
     $customerId = $customerInstance->insertCustomer($_POST);
 
+    // Vérifier si l'insertion s'est bien déroulée
     if ($customerId !== false) {
-        // Créer une instance de la classe Animal
-        $animalInstance = new Animal();
-
-        // Appeler la méthode pour insérer les données de l'animal avec l'ID du client
-        $animalInsertResult = $animalInstance->insertAnimal($_POST, $customerId);
-
-        // Afficher le résultat
-        if ($animalInsertResult) {
-            echo "Données insérées dans la base de données avec succès.";
-        } else {
-            echo "Données du client seul insérées.";
-        }
+        echo "Données insérées dans la base de données avec succès.";
     } else {
         echo "Erreur lors de l'insertion des données du client.";
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -227,36 +217,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="commentaire">Commentaire</label>
                     <input type="commentaire" class="form-control" name="commentaire" id="commentaire" placeholder="Commentaires">
                   </div>
-                <div id="d1" style="display: none" >
-                  <div class="form-group">
-                    <label for="nameDog">Nom</label>
-                    <input type="nameDog" class="form-control" name="nameDog" id="nameDog" placeholder="Entrez le nom du chien">
-                  </div>
-                  <div class="form-group">
-                    <label for="race">Race</label>
-                    <input type="race" class="form-control" name="race" id="race" placeholder="Entrez la race">
-                  </div>
-                  <div class="form-group">
-                    <label for="age">Age</label>
-                    <input type="age" class="form-control" name="age" id="age" placeholder="Entrez l'âge du chien">
-                  </div>
-                  <div class="form-group">
-                    <label for="poids">Poids</label>
-                    <input type="poids" class="form-control" name="poids" id="poids" placeholder="Entrez le poids">
-                  </div>
-                  <div class="form-group">
-                    <label for="taille">Taille</label>
-                    <input type="taille" class="form-control" name="taille" id="taille" placeholder="Entrez la taille">
-                  </div>
-                  <div class="form-group">
-                    <label for="commentairedog">Commentaires</label>
-                    <input type="commentairedog" class="form-control" name="commentairedog" id="commentairedog" placeholder="Entrez un commentaire">
-                  </div>
-                </div>
-                  <div class="card-footer">
-                    <button id="blockBtn" style="display: block" class="btn btn-primary">Rattacher un nouveau chien</button>
-                  </div>
-                  <div class="card-footer">
                     <button type="submit" id="blockBtn2" style="display: block" class="btn btn-success">Valider l'inscription</button>
                   </div>
                 </div>

@@ -1,3 +1,70 @@
+<?php
+
+// Remplacez les valeurs suivantes par les informations de votre base de données
+$serveur = "localhost";
+$utilisateur = "root";
+$motDePasse = "root";
+$baseDeDonnees = "toilettage";
+
+// Connexion à la base de données
+$connexion = new mysqli($serveur, $utilisateur, $motDePasse, $baseDeDonnees);
+
+// Vérifier la connexion
+if ($connexion->connect_error) {
+    die("Échec de la connexion : " . $connexion->connect_error);
+}
+
+// Requête SQL avec alias pour éviter les conflits de noms de colonnes
+$sql = "SELECT 
+    appointments.id, 
+    appointments.date_start as start, 
+    appointments.date_end as end, 
+    animals.name as animal_name, 
+    services.name as service_name, 
+    users.firstname 
+FROM appointments
+INNER JOIN animals ON appointments.animal_id = animals.id
+INNER JOIN services ON appointments.service_id = services.id
+INNER JOIN users ON appointments.user_id = users.id";
+
+$resultat = $connexion->query($sql);
+
+// Vérifier si la requête a réussi
+if ($resultat) {
+    // Initialiser un tableau pour stocker les données
+    $datas = array();
+
+    // Parcourir les résultats de la requête
+    while ($row = $resultat->fetch_assoc()) {
+        // Formater les dates en utilisant strtotime
+        $row['start'] = date('Y-m-d H:i:s', strtotime($row['start']));
+        $row['end'] = date('Y-m-d H:i:s', strtotime($row['end']));
+
+        // Utiliser les clés correctes pour les informations supplémentaires
+        $row['animal_name'] = $row['animal_name'];
+        $row['service_name'] = $row['service_name'];
+        $row['user_name'] = $row['firstname'];
+
+        // Ajouter la ligne au tableau de données
+        $datas[] = $row;
+    }
+
+    // Fermer la connexion à la base de données
+    $connexion->close();
+
+    // Convertir le tableau en format JSON
+    $final_array = json_encode($datas);
+
+//     // Afficher le résultat
+//     echo("<pre>");
+//     echo("<code>");
+//     echo $final_array;
+//     echo("</code>");
+//     echo("</pre>");
+// } else {
+//     echo "Erreur de requête : " . $connexion->error;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -166,7 +233,7 @@
             <div class="sticky-top mb-3">
               <div class="card">
                 <div class="card-header">
-                  <h4 class="card-title">Draggable Events</h4>
+                  <h4 class="card-title">Prendre un RDV</h4>
                 </div>
                 <div class="card-body">
                   <!-- the events -->
@@ -220,7 +287,10 @@
             <div class="card card-primary">
               <div class="card-body p-0">
                 <!-- THE CALENDAR -->
-                <div id="calendar"></div>
+                <input id="event-datas" type="hidden" value='<?php echo $final_array; ?>'>
+                <div id="calendar" style="max-width:100%;"></div>
+                <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
+                <!-- <div id="calendar"></div> -->
               </div>
               <!-- /.card-body -->
             </div>
@@ -260,176 +330,67 @@
 <script src="../dist/js/adminlte.min.js"></script>
 <!-- fullCalendar 2.2.5 -->
 <script src="../plugins/moment/moment.min.js"></script>
-<script src="../plugins/fullcalendar/main.js"></script>
+<!-- <script src="../plugins/fullcalendar/main.js"></script> -->
 <!-- AdminLTE for demo purposes -->
 <script src="../dist/js/demo.js"></script>
 <!-- Page specific script -->
+<!-- <div id="calendar" style="max-width:80%;"></div>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script> -->
+
+  <!-- <script>  
+  let test = document.querySelector("#event-datas").value;
+        let events = JSON.parse(test);
+        console.log(events);
+
+        console.log( JSON.stringify(events) )
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                headerToolbar: { center: 'dayGridMonth,timeGridWeek' }, // buttons for switching between views
+                initialView: 'dayGridMonth',
+                events: events,
+                locale: 'fr',
+                // slotDuration: '02:00'
+            });
+            calendar.render();
+        });
+
+</script> -->
+
 <script>
-  $(function () {
+    let test = document.querySelector("#event-datas").value;
+    let events = JSON.parse(test);
 
-    /* initialize the external events
-     -----------------------------------------------------------------*/
-    function ini_events(ele) {
-      ele.each(function () {
+    console.log(events);
 
-        // create an Event Object (https://fullcalendar.io/docs/event-object)
-        // it doesn't need to have a start or end
-        var eventObject = {
-          title: $.trim($(this).text()) // use the element's text as the event title
-        }
+    console.log(JSON.stringify(events));
 
-        // store the Event Object in the DOM element so we can get to it later
-        $(this).data('eventObject', eventObject)
-
-        // make the event draggable using jQuery UI
-        $(this).draggable({
-          zIndex        : 1070,
-          revert        : true, // will cause the event to go back to its
-          revertDuration: 0  //  original position after the drag
-        })
-
-      })
-    }
-
-    ini_events($('#external-events div.external-event'))
-
-    /* initialize the calendar
-     -----------------------------------------------------------------*/
-    //Date for the calendar events (dummy data)
-    var date = new Date()
-    var d    = date.getDate(),
-        m    = date.getMonth(),
-        y    = date.getFullYear()
-
-    var Calendar = FullCalendar.Calendar;
-    var Draggable = FullCalendar.Draggable;
-
-    var containerEl = document.getElementById('external-events');
-    var checkbox = document.getElementById('drop-remove');
-    var calendarEl = document.getElementById('calendar');
-
-    // initialize the external events
-    // -----------------------------------------------------------------
-
-    new Draggable(containerEl, {
-      itemSelector: '.external-event',
-      eventData: function(eventEl) {
-        return {
-          title: eventEl.innerText,
-          backgroundColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-          borderColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
-          textColor: window.getComputedStyle( eventEl ,null).getPropertyValue('color'),
-        };
-      }
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            headerToolbar: { center: 'dayGridMonth,timeGridWeek' },
+            initialView: 'dayGridMonth',
+            events: events.map(function (event) {
+                return {
+                    title: event.animal_name || event.service_name || event.user_name,
+                    start: event.start,
+                    end: event.end,
+                    id : event.id,
+                    url: '../pages/forms/detailrdv.php?id=' + event.id // Ajoutez le lien que vous souhaitez ici
+                };
+            }),
+            locale: 'fr',
+            // slotDuration: '02:00',
+            eventClick: function (info) {
+                if (info.event.url) {
+                    window.location = info.event.url;
+                }
+            }
+        });
+        calendar.render();
     });
-
-    var calendar = new Calendar(calendarEl, {
-      headerToolbar: {
-        left  : 'prev,next today',
-        center: 'title',
-        right : 'dayGridMonth,timeGridWeek,timeGridDay'
-      },
-      themeSystem: 'bootstrap',
-      //Random default events
-      events: [
-        {
-          title          : 'All Day Event',
-          start          : new Date(y, m, 1),
-          backgroundColor: '#f56954', //red
-          borderColor    : '#f56954', //red
-          allDay         : true
-        },
-        {
-          title          : 'Long Event',
-          start          : new Date(y, m, d - 5),
-          end            : new Date(y, m, d - 2),
-          backgroundColor: '#f39c12', //yellow
-          borderColor    : '#f39c12' //yellow
-        },
-        {
-          title          : 'Meeting',
-          start          : new Date(y, m, d, 10, 30),
-          allDay         : false,
-          backgroundColor: '#0073b7', //Blue
-          borderColor    : '#0073b7' //Blue
-        },
-        {
-          title          : 'Lunch',
-          start          : new Date(y, m, d, 12, 0),
-          end            : new Date(y, m, d, 14, 0),
-          allDay         : false,
-          backgroundColor: '#00c0ef', //Info (aqua)
-          borderColor    : '#00c0ef' //Info (aqua)
-        },
-        {
-          title          : 'Birthday Party',
-          start          : new Date(y, m, d + 1, 19, 0),
-          end            : new Date(y, m, d + 1, 22, 30),
-          allDay         : false,
-          backgroundColor: '#00a65a', //Success (green)
-          borderColor    : '#00a65a' //Success (green)
-        },
-        {
-          title          : 'Click for Google',
-          start          : new Date(y, m, 28),
-          end            : new Date(y, m, 29),
-          url            : 'https://www.google.com/',
-          backgroundColor: '#3c8dbc', //Primary (light-blue)
-          borderColor    : '#3c8dbc' //Primary (light-blue)
-        }
-      ],
-      editable  : true,
-      droppable : true, // this allows things to be dropped onto the calendar !!!
-      drop      : function(info) {
-        // is the "remove after drop" checkbox checked?
-        if (checkbox.checked) {
-          // if so, remove the element from the "Draggable Events" list
-          info.draggedEl.parentNode.removeChild(info.draggedEl);
-        }
-      }
-    });
-
-    calendar.render();
-    // $('#calendar').fullCalendar()
-
-    /* ADDING EVENTS */
-    var currColor = '#3c8dbc' //Red by default
-    // Color chooser button
-    $('#color-chooser > li > a').click(function (e) {
-      e.preventDefault()
-      // Save color
-      currColor = $(this).css('color')
-      // Add color effect to button
-      $('#add-new-event').css({
-        'background-color': currColor,
-        'border-color'    : currColor
-      })
-    })
-    $('#add-new-event').click(function (e) {
-      e.preventDefault()
-      // Get value and make sure it is not null
-      var val = $('#new-event').val()
-      if (val.length == 0) {
-        return
-      }
-
-      // Create events
-      var event = $('<div />')
-      event.css({
-        'background-color': currColor,
-        'border-color'    : currColor,
-        'color'           : '#fff'
-      }).addClass('external-event')
-      event.text(val)
-      $('#external-events').prepend(event)
-
-      // Add draggable funtionality
-      ini_events(event)
-
-      // Remove event from text input
-      $('#new-event').val('')
-    })
-  })
 </script>
+
 </body>
 </html>

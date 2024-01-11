@@ -30,6 +30,59 @@ class Animal {
         }
     }
 
+    public function countTotalAnimal() {
+        // Récupérez la connexion PDO depuis la classe Connexion
+        $pdo = $this->connexion->getPDO();
+    
+        // Requête SQL pour compter le nombre total de lignes dans la table customer
+        $sql = "SELECT COUNT(*) AS total_animals FROM animals";
+    
+        // Exécution de la requête
+        $stmt = $pdo->query($sql);
+    
+        // Récupération du résultat
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        // Retourne le nombre total de clients
+        return $result['total_animals'];
+    }
+
+    public function searchAnimal($searchData) {
+        // Validate and sanitize user input
+        $searchTerm = '%' . $searchData['search'] . '%';
+    
+        // Utilisez des requêtes préparées pour éviter les attaques par injection SQL
+        $searchQuery = "SELECT c.*, a.*
+                        FROM customers c
+                        LEFT JOIN animals a ON c.id = a.customer_id
+                        WHERE a.name LIKE :searchTerm";
+    
+        $stmt = $this->connexion->getPDO()->prepare($searchQuery);
+        $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
+        $stmt->execute();
+    
+        $results = array(); // Initialisez un tableau pour stocker les résultats
+    
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $results[] = array('customer' => $row);
+        }
+    
+        return $results; // Retourne les résultats
+    }
+
+    public function updateAnimal($customerId, $newData) {
+        // Utilisez des requêtes préparées pour éviter les attaques par injection SQL
+        $updateQuery = "UPDATE animals SET `name` = ?, breed = ? WHERE customer_id = ?";
+        $stmt = $this->connexion->getPDO()->prepare($updateQuery);
+    
+        // Vérifiez si la requête a réussi
+        if ($stmt->execute([$newData['name'], $newData['breed'], $customerId])) {
+            return true; // La mise à jour a réussi
+        } else {
+            return false; // La mise à jour a échoué
+        }
+    }
+
     public function insertAnimal($formData, $customerId) {
         // Récupérer les données du formulaire pour l'animal
         $namedog = $formData["nameDog"];
