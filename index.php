@@ -1,6 +1,5 @@
 <?php
 session_start();
-<<<<<<< HEAD
 require_once 'dist/php/verification.php';
 require_once 'dist/php/customerclass.php';
 require_once 'dist/php/animalsclass.php';
@@ -13,32 +12,6 @@ $customerscount = $CalRate->countTotalCustomers();
 $countrdvfuture = $CalRate->countFutureAppointments();
 $countAnimals = $CalRateanimals->countTotalAnimal();
 
-=======
-require_once 'dist/php/userclass.php';
-require_once 'dist/php/connectionclass.php';
-
-
-// Connexion à la base de données
-$connexion = new Connexion();
-$u = new User();
-$users = $u->getAll();
-// Vérifiez si l'utilisateur est connecté en vérifiant la session
-
-
-// Envoi des données du formulaire
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  // Récupérer les données du formulaire
-  $firstname = $_POST["firstname"];
-  $mail = $_POST["mail"];
-  // Vous pouvez maintenant traiter les données, les valider, les stocker dans une base de données, etc.
-  
-  // Exemple de réponse
-}
-$nomUtilisateur = $_SESSION["username"];
-
-// Fermer la connexion
-$connexion->conn->close();
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -193,7 +166,7 @@ $connexion->conn->close();
             </a>
           </li>
           <li class="nav-item">
-            <a href="pages/examples/projects.php" class="nav-link">
+            <a href="pages/examples/projects.html" class="nav-link">
               <i class="nav-icon fas fa-book"></i>
               <p>Admin</p>
             </a>
@@ -351,7 +324,7 @@ $connexion->conn->close();
                     <td class="editable" id="name_' . $result['customer']['id'] . '">' . $result['animal']['name'] . '</td>
                     <td class="editable" id="breed_' . $result['customer']['id'] . '">' . $result['animal']['breed'] . '</td>
                     <td><i class="fas fa-edit" onclick="editRecord(event, ' . $result['customer']['id'] . ')" style="cursor: pointer;"></i>
-                    <a href="detailclient.php"><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
+                    <a href="pages/customers/detailCustomer.php?id="><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
                     <a href="detailrdv.php"><i class="far fa-calendar-alt" style="cursor: pointer; margin-left: 10px;"></i></a></td>
                 </tr>';
             }

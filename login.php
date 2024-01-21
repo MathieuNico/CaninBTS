@@ -1,26 +1,15 @@
 <?php
 session_start();
-<<<<<<< HEAD
 
 require_once 'dist/php/connectionclass.php';
 require_once 'dist/php/userclass.php';
 // require_once 'dist/php/customerclass.php';
 
-=======
- 
-require_once 'dist/php/connectionclass.php';
-require_once 'dist/php/userclass.php';
- 
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = new User();
     $username = $_POST["firstname"];
     $password = $_POST["mdp"];
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
     if ($user->authenticateUser($username, $password)) {
         header("Location:index.php");
         exit();

@@ -1,14 +1,8 @@
 <?php
-<<<<<<< HEAD
 session_start();
 require_once 'connectionclass.php';
 require_once 'animalsclass.php';
 
-=======
-
-// require_once 'include/session.php';
-require_once 'connectionclass.php';
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
 
 class Customer {
     public $connexion;
@@ -19,6 +13,7 @@ class Customer {
     public $telephone;
     public $postal_adress;
     public $commentary;
+    public $is_actif;
 
     function __construct($customer_bdd = NULL) {
         $this->connexion = new Connexion();
@@ -30,11 +25,11 @@ class Customer {
             $this->telephone = $customer_bdd['telephone'];
             $this->postal_adress = $customer_bdd['postal_adress'];
             $this->commentary = $customer_bdd['commentary'];
+            $this->is_actif = $customer_bdd['is_actif'];
         }
     }
 
     public function getAppointments() {
-        // Requête SQL pour récupérer les rendez-vous à venir avec toutes les informations rattachées
         $query = "
             SELECT 
                 a.*,
@@ -53,29 +48,26 @@ class Customer {
             WHERE
                 a.date_start >= CURDATE()
         ";
-    
+
         $stmt = $this->connexion->getPDO()->prepare($query);
         $stmt->execute();
-    
+
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
         return $results;
     }
 
     public function insertCustomer($formData) {
-        // Validate and sanitize user input
         $name = $this->sanitizeInput($formData['name']);
         $prenom = $this->sanitizeInput($formData['prenom']);
         $email = $this->sanitizeInput($formData['email']);
         $phone = $this->sanitizeInput($formData['phone']);
         $adress = $this->sanitizeInput($formData['adress']);
         $commentary = $this->sanitizeInput($formData['commentaire']);
-    
-        // Prepare the insertion query for the customer
+
         $insertClientQuery = "INSERT INTO customers (`firstname`, `lastname`, `telephone`, `mail`, `postal_adress`, `commentary`) 
                               VALUES (:firstname, :lastname, :telephone, :mail, :postal_adress, :commentary)";
-        
-        // Utilize prepared statements to avoid SQL injection
+
         $stmt = $this->connexion->getPDO()->prepare($insertClientQuery);
         $stmt->bindParam(':firstname', $name, PDO::PARAM_STR);
         $stmt->bindParam(':lastname', $prenom, PDO::PARAM_STR);
@@ -83,41 +75,35 @@ class Customer {
         $stmt->bindParam(':mail', $email, PDO::PARAM_STR);
         $stmt->bindParam(':postal_adress', $adress, PDO::PARAM_STR);
         $stmt->bindParam(':commentary', $commentary, PDO::PARAM_STR);
-    
-        // Execute the prepared statement
+
         if ($stmt->execute()) {
-            // Retrieve the ID of the newly inserted customer
             return $this->connexion->getPDO()->lastInsertId();
         } else {
-            // Handle the error, log or throw an exception
             return false;
         }
     }
 
     public function searchCustomer($searchData) {
-        // Validate and sanitize user input
         $searchTerm = '%' . $searchData['search'] . '%';
-        
-        // Utiliser LEFT JOIN pour récupérer les informations sur les clients et les animaux
+
         $searchQuery = "
             SELECT customers.*, animals.*
             FROM customers
             LEFT JOIN animals ON customers.id = animals.customer_id
             WHERE customers.mail LIKE :searchTerm OR customers.lastname LIKE :searchTerm
         ";
-    
+
         $stmt = $this->connexion->getPDO()->prepare($searchQuery);
         $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
         $stmt->execute();
-    
-        $results = array(); // Initialisez un tableau pour stocker les résultats
-    
+
+        $results = array();
+
         while ($rowData = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            // Ajouter les données au tableau des résultats
             $results[] = array('customer' => $rowData, 'animal' => $rowData);
         }
-    
-        return $results; // Retourne les résultats
+
+        return $results;
     }
 
     public function calculateRevenue() {
@@ -139,16 +125,68 @@ class Customer {
         return $result['chiffre_affaire'];
     }
 
-    public function updateCustomer($customerId, $newData) {
-        // Utilisez des requêtes préparées pour éviter les attaques par injection SQL
-        $updateQuery = "UPDATE customers SET lastname = ?, firstname = ?, mail = ? WHERE id = ?";
-        $stmt = $this->connexion->getPDO()->prepare($updateQuery);
+    public function getCustomerById($customer_id) {
+        $query = "SELECT * FROM customers WHERE id = :customer_id";
+        
+        $stmt = $this->connexion->getPDO()->prepare($query);
+        $stmt->bindParam(':customer_id', $customer_id, PDO::PARAM_INT);
+        $stmt->execute();
     
-        // Vérifiez si la requête a réussi
-        if ($stmt->execute([$newData['lastname'], $newData['firstname'], $newData['mail'], $customerId])) {
-            return true; // La mise à jour a réussi
+        $customer_data = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($customer_data) {
+            return new Customer($customer_data);
         } else {
-            return false; // La mise à jour a échoué
+            return null; // ou une autre indication que le client n'a pas été trouvé
+        }
+    }
+
+    public function updateCustomer($newData) {
+        // Assurez-vous que l'ID du client est inclus dans les données du formulaire ($_POST)
+        $customerId = isset($newData['id']) ? $newData['id'] : null;
+    
+        // Vérifiez si l'ID du client est défini avant de procéder à la mise à jour
+        if ($customerId) {
+            $updateQuery = "UPDATE customers SET lastname = :lastname, firstname = :firstname, mail = :mail WHERE id = :id";
+            $stmt = $this->connexion->getPDO()->prepare($updateQuery);
+    
+            $stmt->bindParam(':lastname', $newData['lastname'], PDO::PARAM_STR);
+            $stmt->bindParam(':firstname', $newData['firstname'], PDO::PARAM_STR);
+            $stmt->bindParam(':mail', $newData['mail'], PDO::PARAM_STR);
+            $stmt->bindParam(':id', $customerId, PDO::PARAM_INT);
+    
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            // Gérer le cas où l'ID du client n'est pas défini
+            return false;
+        }
+    }
+
+    public function updateCustomerAll($formData) {
+        // Validate and sanitize user input
+        $id = $this->sanitizeInput($formData['id']);
+        $name = $this->sanitizeInput($formData['firstname']);
+        $prenom = $this->sanitizeInput($formData['lastname']);
+        $email = $this->sanitizeInput($formData['mail']);
+        $phone = $this->sanitizeInput($formData['telephone']);
+        $adress = $this->sanitizeInput($formData['postal_adress']);
+        $commentary = $this->sanitizeInput($formData['commentary']);
+        $is_actif = $this->sanitizeInput($formData['is_actif']);
+ 
+        // Prepare and execute the insertion query for the customer
+        $updateClientQuery = "UPDATE customers SET `firstname` = '$name', `lastname` = '$prenom', `telephone` = '$phone', `mail` = '$email', `postal_adress` = '$adress', `commentary` = '$commentary', `is_actif` = '$is_actif' WHERE id = $id";
+ 
+        // Use the connection property of Connexion
+        if ($this->connexion->conn->query($updateClientQuery) === TRUE) {
+            // Retrieve the ID of the newly inserted customer
+            return $this->connexion->conn->insert_id;
+        } else {
+            // Handle the error, log or throw an exception
+            return false;
         }
     }
 
@@ -229,9 +267,8 @@ class Customer {
     // Additional method for input sanitization
     private function sanitizeInput($input) {
         // Implement your input sanitization logic here
-        // Example: $sanitizedInput = mysqli_real_escape_string($this->connexion->conn, $input);
+        // Example: $sanitizedInput = filter_var($input, FILTER_SANITIZE_STRING);
         return $input;
     }
-
 }
 ?>

@@ -1,40 +1,3 @@
-<?php
-$serveur = "localhost"; // Remplacez localhost par l'adresse de votre serveur
-$user = "root"; // Remplacez par votre nom d'utilisateur
-$pass = "root"; // Remplacez par votre mot de passe
-$dbname = "toilettage"; // Remplacez par le nom de votre base de données
-
-// Connexion à la base de données
-$connexion = new mysqli($serveur, $user, $pass, $dbname);
-
-// Vérifier la connexion
-if ($connexion->connect_error) {
-    die("La connexion a échoué : " . $connexion->connect_error);
-}
-
-session_start();
-if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
-    // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
-    header("Location: login.php");
-    exit;
-}
-// Le nom d'utilisateur est stocké dans $_SESSION["username"]
-$nomUtilisateur = $_SESSION["username"];
-
-$req_animals = mysqli_query($connexion,"SELECT name FROM animals;");
-$req_service = mysqli_query($connexion,"SELECT name FROM services;");
-
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-  
-  // Récuperation des informations du formulaire d'ajout d'un rendez-vous
-  $mail = $_POST["InputMail"];
-  $name = $_POST["InputName"];
-
-}
-$connexion->close();
-
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -203,31 +166,23 @@ $connexion->close();
             <div class="sticky-top mb-3">
               <div class="card">
                 <div class="card-header">
-                  <h4 class="card-title">Nouveau Rendez-vous</h4>
+                  <h4 class="card-title">Draggable Events</h4>
                 </div>
                 <div class="card-body">
-                  <form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
-                    <div class="form-group">
-                      <label for="Input-Mail">Entrez l'email du client</label>
-                      <input type="Email" class="form-control" name="Input-Mail" placeholder="Adresse Mail">
-                    </div>
-                    <div class="form-group">
-                      <label for="Input-Name">Nom de l'animal</label>
-                      <select class="form-group" name="Input-Name" >
-                        <?php
-                        while ($name_animals = mysqli_feth_assoc($req_animals)) {
-                          echo '<option value="' . $name_animals['name'] . '">' . $name_animals['name'] . '</option>';
-                        }
-                        ?>
-                      </select>
-                    </div>
+                  <!-- the events -->
+                  <div id="external-events">
+                    <div class="external-event bg-success">Lunch</div>
+                    <div class="external-event bg-warning">Go home</div>
+                    <div class="external-event bg-info">Do homework</div>
+                    <div class="external-event bg-primary">Work on UI design</div>
+                    <div class="external-event bg-danger">Sleep tight</div>
                     <div class="checkbox">
-                    <label for="drop-remove">
-                      <input type="checkbox" id="drop-remove">
-                      remove after drop
-                    </label>
+                      <label for="drop-remove">
+                        <input type="checkbox" id="drop-remove">
+                        remove after drop
+                      </label>
+                    </div>
                   </div>
-                
                 </div>
                 <!-- /.card-body -->
               </div>
@@ -347,15 +302,26 @@ $connexion->close();
         y    = date.getFullYear()
 
     var Calendar = FullCalendar.Calendar;
-  
+    var Draggable = FullCalendar.Draggable;
 
     var containerEl = document.getElementById('external-events');
-
+    var checkbox = document.getElementById('drop-remove');
     var calendarEl = document.getElementById('calendar');
 
     // initialize the external events
     // -----------------------------------------------------------------
 
+    new Draggable(containerEl, {
+      itemSelector: '.external-event',
+      eventData: function(eventEl) {
+        return {
+          title: eventEl.innerText,
+          backgroundColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
+          borderColor: window.getComputedStyle( eventEl ,null).getPropertyValue('background-color'),
+          textColor: window.getComputedStyle( eventEl ,null).getPropertyValue('color'),
+        };
+      }
+    });
 
     var calendar = new Calendar(calendarEl, {
       headerToolbar: {

@@ -1,11 +1,6 @@
 <?php
 session_start();
 require_once 'connectionclass.php';
-<<<<<<< HEAD
- 
-class User {
- 
-=======
 require_once 'capabilitiesclass.php';
 require_once 'servicesclass.php';
 
@@ -14,72 +9,41 @@ $capabilites = $capa->getAll();
 $service = new Services();
 $service_test = $service->getAll();
 
-
 class User {
 
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
     public $id;
     public $idisadmin;
     public $firstname;
     public $lastname;
-<<<<<<< HEAD
-    public $age;
-=======
     public $telephone;
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
     public $password;
     public $email;
     public $address;
     public $zip;
     public $connexion;
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
     function __construct($user_bdd = NULL) {
         $this->connexion = new Connexion();
-        if($user_bdd !== NULL) {
+        if ($user_bdd !== NULL) {
             $this->id = $user_bdd["id"];
             $this->idisadmin = $user_bdd["is_admin"];
             $this->firstname = $user_bdd["firstname"];
             $this->lastname = $user_bdd["lastname"];
-<<<<<<< HEAD
-            $this->age = $user_bdd["age"];
-            $this->password = $user_bdd["password"];
-            $this->email = $user_bdd["email"];
-            $this->address = $user_bdd["address"];
-            $this->zip = $user_bdd["zip"];
- 
-        }
-    }
- 
-=======
             $this->telephone = $user_bdd["telephone"];
             $this->password = $user_bdd["password"];
             $this->email = $user_bdd["mail"];
             $this->address = $user_bdd["postal_adress"];
             $this->zip = $user_bdd["zip"];
-
         }
     }
 
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
     public function authenticateUser($username, $password) {
-        $serveur = "localhost";
-        $dbname = "toilettage";
-        $user = "root";
-        $pass = "root";
- 
         try {
-            $connexion = new PDO("mysql:host=$serveur;dbname=$dbname", $user, $pass);
-            $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
- 
-            $requete = $connexion->prepare("SELECT * FROM users WHERE firstname = :firstname AND mdp = :mdp");
+            $requete = $this->connexion->getPDO()->prepare("SELECT * FROM users WHERE firstname = :firstname AND mdp = :mdp");
             $requete->bindParam(':firstname', $username);
             $requete->bindParam(':mdp', $password);
             $requete->execute();
- 
+
             if ($requete->rowCount() == 1) {
                 $_SESSION["isLoggedIn"] = true;
                 $_SESSION["username"] = $username;
@@ -92,82 +56,61 @@ class User {
             return false;
         }
     }
-<<<<<<< HEAD
- 
- 
-=======
 
-
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
     public function getAll() {
-        $users_result = $this->connexion->conn->query("SELECT * FROM users;"); // résultat de la requête qui contient tous les users
+        $users_result = $this->connexion->getPDO()->query("SELECT * FROM users;");
         $users = [];
-        while($user_bdd = mysqli_fetch_assoc($users_result)) {
+        while ($user_bdd = $users_result->fetch(PDO::FETCH_ASSOC)) {
             $users[] = new User($user_bdd);
         }
         return $users;
     }
-<<<<<<< HEAD
- 
-    public function getByID($id) {
-        $user_bdd = $this->connexion->conn->query("SELECT firstname FROM users WHERE id = $id ;"); // résultat de la requête qui contient tous les users
-        return new User($user_bdd);
-    }
-}
-   
-=======
 
     public function getByID($id) {
-        $user_bdd = $this->connexion->conn->query("SELECT * FROM users WHERE id = $id ;"); // résultat de la requête qui contient tous les users
+        $user_bdd = $this->connexion->getPDO()->query("SELECT * FROM users WHERE id = $id ;");
         if ($user_bdd) {
-            // Retourne un tableau associatif des données de l'utilisateur
-            return new User($user_bdd->fetch_assoc());
+            return new User($user_bdd->fetch(PDO::FETCH_ASSOC));
         } else {
-            // Gérer les erreurs de requête ici
             return null;
         }
     }
 
-    public function CanDoCapabilities($user_id){
-        $verif = $this->connexion->conn->query("SELECT service_id FROM capabilities WHERE user_id = $user_id;");
+    public function CanDoCapabilities($user_id) {
+        $verif = $this->connexion->getPDO()->query("SELECT service_id FROM capabilities WHERE user_id = $user_id;");
         if ($verif) {
-            $services=[
-                // mettre à jour en fonction de la requête 
-                'toilettage'=> false,
-                'découpage'=> false,
-                'vaccination'=> false,
-                'shampoing'=> false,
+            $services = [
+                'toilettage' => false,
+                'découpage' => false,
+                'vaccination' => false,
+                'shampoing' => false,
             ];
-            while ($row = $verif->fetch_assoc()) {
+            while ($row = $verif->fetch(PDO::FETCH_ASSOC)) {
                 $service_id = $row['service_id'];
-                $get_name_service = $this->connexion->conn->query("SELECT name FROM services WHERE id = $service_id;");
+                $get_name_service = $this->connexion->getPDO()->query("SELECT name FROM services WHERE id = $service_id;");
                 if ($get_name_service) {
-                    $service_name_row = $get_name_service->fetch_assoc();
+                    $service_name_row = $get_name_service->fetch(PDO::FETCH_ASSOC);
                     $service_name = $service_name_row['name'];
                     if (isset($services[$service_name])) {
                         $services[$service_name] = true;
                     }
                 }
-                                
             }
-            
-        } 
-        return($services);
+        }
+        return ($services);
     }
 
-    public function getAllServices(){
+    public function getAllServices() {
         $service_names = [];
-        $getName = $this->connexion->conn->query("SELECT name FROM services ;");
+        $getName = $this->connexion->getPDO()->query("SELECT name FROM services ;");
         if ($getName) {
-            while ($row = $getName->fetch_assoc()) {
+            while ($row = $getName->fetch(PDO::FETCH_ASSOC)) {
                 $service_names[] = $row['name'];
             }
         }
         return $service_names;
     }
-    
 
-    public function insertUser($formData){
+    public function insertUser($formData) {
         $lastname = $this->sanitizeInput($formData['inputName']);
         $firstname = $this->sanitizeInput($formData['inputPrénom']);
         $email = $this->sanitizeInput($formData['inputEmail']);
@@ -175,58 +118,52 @@ class User {
         $address = $this->sanitizeInput($formData['inputAdress']);
         $admin = $this->sanitizeInput($formData['inputAdmin']);
         $password = $this->sanitizeInput($formData['inputPassword']);
-        $service = $this->sanitizeInput($formData['activite']); // Utilisez 'activite' au lieu de 'inputActivite'
+        $service = $this->sanitizeInput($formData['activite']);
+
         if (empty($lastname) || empty($firstname)) {
-            // Gérer l'erreur, afficher un message ou retourner une valeur appropriée
             return false;
         }
-        // Utilisation d'une déclaration préparée pour éviter les injections SQL
-        $insertUserQuery = $this->connexion->conn->prepare("INSERT INTO users (`is_admin`, `firstname`, `lastname`, `telephone`, `mail`, `postal_adress`, `mdp`) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $insertUserQuery->bind_param("issssss", $admin, $firstname, $lastname, $telephone, $email, $address, $password);
-    
-        // Exécution de la requête pour insérer l'utilisateur
+
+        $insertUserQuery = $this->connexion->getPDO()->prepare("INSERT INTO users (`is_admin`, `firstname`, `lastname`, `telephone`, `mail`, `postal_adress`, `mdp`) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $insertUserQuery->bindParam(1, $admin, PDO::PARAM_INT);
+        $insertUserQuery->bindParam(2, $firstname, PDO::PARAM_STR);
+        $insertUserQuery->bindParam(3, $lastname, PDO::PARAM_STR);
+        $insertUserQuery->bindParam(4, $telephone, PDO::PARAM_STR);
+        $insertUserQuery->bindParam(5, $email, PDO::PARAM_STR);
+        $insertUserQuery->bindParam(6, $address, PDO::PARAM_STR);
+        $insertUserQuery->bindParam(7, $password, PDO::PARAM_STR);
+
         if ($insertUserQuery->execute()) {
-            // Récupérer l'ID du nouvel utilisateur inséré
-            
-            $user_id = $this->connexion->conn->insert_id;
-    
-            // Utilisation d'une autre déclaration préparée pour insérer la capacité (activité)
-            $insertActiviteQuery = $this->connexion->conn->prepare("INSERT INTO capabilities (`user_id`, `service_id`) VALUES (?, ?)");
-            $insertActiviteQuery->bind_param("ii", $user_id, $service);
-    
-            // Exécution de la requête pour insérer la capacité (activité)
+            $user_id = $this->connexion->getPDO()->lastInsertId();
+
+            $insertActiviteQuery = $this->connexion->getPDO()->prepare("INSERT INTO capabilities (`user_id`, `service_id`) VALUES (?, ?)");
+            $insertActiviteQuery->bindParam(1, $user_id, PDO::PARAM_INT);
+            $insertActiviteQuery->bindParam(2, $service, PDO::PARAM_INT);
+
             if ($insertActiviteQuery->execute()) {
-                return $user_id; // Vous pouvez retourner l'ID de l'utilisateur ici
+                return $user_id;
             } else {
-                // Gérer l'erreur pour l'insertion de la capacité
                 return false;
             }
         } else {
-            // Gérer l'erreur pour l'insertion de l'utilisateur
             return false;
         }
     }
 
-    public function deleteUser($formData){
-        // Récupérer l'ID de l'utilisateur à supprimer
+    public function deleteUser($formData) {
         $id = $this->sanitizeInput($formData['user_id']);
-    
-        // Préparer la requête de suppression avec une déclaration préparée
-        $delete = $this->connexion->conn->prepare("DELETE FROM users WHERE id = ?");
-        
-        // Liaison des paramètres
-        $delete->bind_param("i", $id);
-        // Exécuter la requête
+
+        $delete = $this->connexion->getPDO()->prepare("DELETE FROM users WHERE id = ?");
+        $delete->bindParam(1, $id, PDO::PARAM_INT);
+
         if ($delete->execute()) {
-            // Retourner l'ID de l'utilisateur supprimé
             return $id;
         } else {
-            // Gérer l'erreur pour la suppression de l'utilisateur
             return false;
         }
     }
 
-    public function updateUser($formData){
+    public function updateUser($formData) {
         $lastname = $this->sanitizeInput($formData['inputName']);
         $firstname = $this->sanitizeInput($formData['inputPrénom']);
         $email = $this->sanitizeInput($formData['inputEmail']);
@@ -234,35 +171,33 @@ class User {
         $address = $this->sanitizeInput($formData['inputAdress']);
 
         if (empty($lastname) || empty($firstname)) {
-            // Gérer l'erreur, afficher un message ou retourner une valeur appropriée
             return false;
         }
-        $updateUserQuery = $this->connexion->conn->prepare("UPDATE users SET firstname = ?, lastname = ?, mail = ?, telephone = ?, postal_adress = ? WHERE lastname = ?");
-        $updateUserQuery->bind_param("ssssss", $firstname, $lastname, $email, $telephone, $address, $lastname);
-        
+
+        $updateUserQuery = $this->connexion->getPDO()->prepare("UPDATE users SET firstname = ?, lastname = ?, mail = ?, telephone = ?, postal_adress = ? WHERE lastname = ?");
+        $updateUserQuery->bindParam(1, $firstname, PDO::PARAM_STR);
+        $updateUserQuery->bindParam(2, $lastname, PDO::PARAM_STR);
+        $updateUserQuery->bindParam(3, $email, PDO::PARAM_STR);
+        $updateUserQuery->bindParam(4, $telephone, PDO::PARAM_STR);
+        $updateUserQuery->bindParam(5, $address, PDO::PARAM_STR);
+        $updateUserQuery->bindParam(6, $lastname, PDO::PARAM_STR);
+
         $result = $updateUserQuery->execute();
 
-    // Vérifiez si la mise à jour a réussi
         if ($result) {
             echo "Mise à jour réussie!";
         } else {
-            echo "Erreur lors de la mise à jour: " . $updateUserQuery->error;
+            echo "Erreur lors de la mise à jour: " . implode(", ", $updateUserQuery->errorInfo());
         }
 
-    // Fermez la requête préparée
-        $updateUserQuery->close();
+        $updateUserQuery->closeCursor();
 
-        return $result; // Retournez le résultat de la mise à jour
+        return $result;
     }
 
-    
-
     private function sanitizeInput($input) {
-        // Implement your input sanitization logic here
-        // Example: $sanitizedInput = mysqli_real_escape_string($this->connexion->conn, $input);
         return $input;
     }
 
 }
->>>>>>> a7a21154c33cd36416d98ee2000571f5c61eab80
 ?>

@@ -1,87 +1,32 @@
 <?php
+// Connexion à la base de données (assure-toi d'avoir une connexion établie)
+$servername = "localhost";
+$username = "root";
+$password = "root";
+$dbname = "toilettage";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Vérifie la connexion
+if ($conn->connect_error) {
+    die("La connexion à la base de données a échoué : " . $conn->connect_error);
+}
 
 // Récupère les données de la table 'animals'
-require_once '../../dist/php/animalsclass.php';
+$sql = "SELECT * FROM animals";
+$result = $conn->query($sql);
 
-// Créer une instance de la classe animals
-   $animalInstance = new Animal();
-
-// Récupérer tous les clients
-   $animals = $animalInstance->getAll();
-
-
-// Inclure la classe Customer
-require_once '../../dist/php/customerclass.php';
-
-// ... (autres inclusions et code) ...
-
-// Créer une instance de la classe Customer
-$customerInstance = new Customer();
-
-// Récupérer tous les clients
-$customers = $customerInstance->getAll();
-
-
+// Récupère les données de la table 'customers'
+$sql_customers = "SELECT * FROM customers";
+$result_customers = $conn->query($sql_customers);
 
 // Récupère les données de la table 'services'
-require_once '../../dist/php/servicesclass.php';
+$sql_services = "SELECT * FROM services";
+$result_services = $conn->query($sql_services);
 
-// Créer une instance de la classe Services
-$servicesInstance = new Services();
-
-// Récupérer tous les services
-$services = $servicesInstance->getAll();
-
-// Afficher les services permet de voir les données transmise
-//foreach ($services as $service) {
-//    echo "ID : " . $service->id . "<br>";
-//    echo "Nom : " . $service->name . "<br>";
-//    echo "Prix : " . $service->price . "<br>";
-//    echo "-----------------------<br>";
-//}
-
-// Vérifier si la classe a été incluse
-//if (class_exists('Services')) {
-//  echo "La classe Services a été incluse avec succès.";
-//} else {
-//  echo "Erreur lors de l'inclusion de la classe Services.";
-//}
-
-// Récupère les données de la table 'user'
-require_once '../../dist/php/usersclass.php';
-
-// Créer une instance de la classe Services
-$userInstance = new User();
-
-// Récupérer tous les services
-$users = $userInstance->getAll();
-
-// Récupère les données de la table 'user'
-require_once '../../dist/php/appointementsclass.php';
-
-// Créer une instance de la classe Services
-$appointementInstance = new Appointment();
-
-// Récupérer tous les services
-$appointements = $appointementInstance->getAll();
-
-// Afficher les services permet de voir les données transmise
-foreach ($appointements as $appointement) {
-    echo "numeros rdv : " . $appointement->id . "<br>";
-    echo "debut : " . $appointement->date_start . "<br>";
-    echo "fin : " . $appointement->date_end . "<br>";
-    echo "payée : " . $appointement->is_paid . "<br>";
-    echo "employer : " . $appointement->user_id . "<br>";
-    echo "animal : " . $appointement->animal_id . "<br>";
-    echo "Service : " . $appointement->service_id . "<br>";
-    
-}
-// Vérifier si la classe a été incluse
-if (class_exists('Services')) {
-  echo "La classe Services a été incluse avec succès.";
-} else {
-  echo "Erreur lors de l'inclusion de la classe Services.";
-}
+// Récupère les données de la table 'users'
+$sql_users = "SELECT * FROM users";
+$result_users = $conn->query($sql_users);
 
 ?>
 
@@ -275,22 +220,23 @@ if (class_exists('Services')) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <?php
-                                    if (!empty($animals)) {
-                                        foreach ($animals as $animal) {
+                                    <?php
+                                    // Affiche les données dans le tableau
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
                                             echo "<tr>";
-                                            echo "<td>" . $animal->id . "</td>";
-                                            echo "<td>" . $animal->name . "</td>";
-                                            echo "<td>" . $animal->breed . "</td>";
-                                            echo "<td>" . $animal->age . "</td>";
-                                            echo "<td>" . $animal->weight . "</td>";
-                                            echo "<td>" . $animal->height . "</td>";
-                                            echo "<td>" . $animal->comment. "</td>";
-                                            echo "<td>" . $animal->customer_id. "</td>";
+                                            echo "<td>" . $row["id"] . "</td>";
+                                            echo "<td>" . $row["name"] . "</td>";
+                                            echo "<td>" . $row["breed"] . "</td>";
+                                            echo "<td>" . $row["age"] . "</td>";
+                                            echo "<td>" . $row["weight"] . "</td>";
+                                            echo "<td>" . $row["height"] . "</td>";
+                                            echo "<td>" . $row["comment"] . "</td>";
+                                            echo "<td>" . $row["customer_id"] . "</td>";
                                             echo "</tr>";
                                         }
                                     } else {
-                                        echo "<tr><td colspan='7'>Aucun animal trouvé</td></tr>";
+                                        echo "<tr><td colspan='8'>Aucun animal trouvé</td></tr>";
                                     }
                                     ?>
                                 </tbody>
@@ -338,16 +284,16 @@ if (class_exists('Services')) {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    if (!empty($customers)) {
-                                        foreach ($customers as $customer) {
+                                    if ($result_customers->num_rows > 0) {
+                                        while ($row_customers = $result_customers->fetch_assoc()) {
                                             echo "<tr>";
-                                            echo "<td>" . $customer->id . "</td>";
-                                            echo "<td>" . $customer->firstname . "</td>";
-                                            echo "<td>" . $customer->lastname . "</td>";
-                                            echo "<td>" . $customer->mail . "</td>";
-                                            echo "<td>" . $customer->telephone . "</td>";
-                                            echo "<td>" . $customer->postal_adress . "</td>";
-                                            echo "<td>" . $customer->commentary . "</td>";
+                                            echo "<td>" . $row_customers["id"] . "</td>";
+                                            echo "<td>" . $row_customers["firstname"] . "</td>";
+                                            echo "<td>" . $row_customers["lastname"] . "</td>";
+                                            echo "<td>" . $row_customers["mail"] . "</td>";
+                                            echo "<td>" . $row_customers["telephone"] . "</td>";
+                                            echo "<td>" . $row_customers["postal_adress"] . "</td>";
+                                            echo "<td>" . $row_customers["commentary"] . "</td>";
                                             echo "</tr>";
                                         }
                                     } else {
@@ -393,20 +339,19 @@ if (class_exists('Services')) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <?php
-                                // Vérifier si des services sont disponibles
-                                if (!empty($services)) {
-                                    foreach ($services as $service) {
-                                        echo "<tr>";
-                                        echo "<td>" . $service->id . "</td>";
-                                        echo "<td>" . $service->name . "</td>";
-                                        echo "<td>" . $service->price . "</td>";
-                                        echo "</tr>";
+                                    <?php
+                                    if ($result_services->num_rows > 0) {
+                                        while ($row_services = $result_services->fetch_assoc()) {
+                                            echo "<tr>";
+                                            echo "<td>" . $row_services["id"] . "</td>";
+                                            echo "<td>" . $row_services["name"] . "</td>";
+                                            echo "<td>" . $row_services["price"] . "</td>";
+                                            echo "</tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='3'>Aucun service trouvé</td></tr>";
                                     }
-                                } else {
-                                    echo "<tr><td colspan='3'>Aucun service trouvé</td></tr>";
-                                }
-                                ?>
+                                    ?>
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -435,48 +380,48 @@ if (class_exists('Services')) {
                         <div class="card-body">
                             <table id="example2_users" class="table table-bordered table-hover">
                             <thead>
-                              <tr>
-                                <th>ID</th>
-                                <th>Admin</th>
-                                <th>Prénom</th>
-                                <th>Nom</th>
-                                <th>Téléphone</th>
-                                <th>Email</th>
-                                <th>Adresse</th>
-                                <th>Mot de passe</th>  
-                              </tr>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Prénom</th>
+                                        <th>Nom</th>
+                                        <th>Téléphone</th>
+                                        <th>Email</th>
+                                        <th>Adresse</th>
+                                        <th>Mot de passe</th>
+                                        <th>Admin</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    if (!empty($users)) {
-                                        foreach ($users as $user) {
-                                          echo "<tr>";
-                                          echo "<td>" . $user->id . "</td>";
-                                          echo "<td>" . $user->idisadmin . "</td>";
-                                          echo "<td>" . $user->firstname . "</td>";
-                                          echo "<td>" . $user->lastname . "</td>";
-                                          echo "<td>" . $user->telephone . "</td>";
-                                          echo "<td>" . $user->email . "</td>";
-                                          echo "<td>" . $user->address . "</td>";
-                                          echo "<td>" . $user->password . "</td>";
-                                          echo "</tr>";
+                                    if ($result_users->num_rows > 0) {
+                                        while ($row_users = $result_users->fetch_assoc()) {
+                                            echo "<tr>";
+                                            echo "<td>" . $row_users["id"] . "</td>";
+                                            echo "<td>" . $row_users["firstname"] . "</td>";
+                                            echo "<td>" . $row_users["lastname"] . "</td>";
+                                            echo "<td>" . $row_users["telephone"] . "</td>";
+                                            echo "<td>" . $row_users["mail"] . "</td>";
+                                            echo "<td>" . $row_users["postal_adress"] . "</td>";
+                                            echo "<td>" . $row_users["mdp"] . "</td>";
+                                            echo "<td>" . ($row_users["is_admin"] == 1 ? 'Oui' : 'Non') . "</td>";
+                                            echo "</tr>";
                                         }
                                     } else {
-                                        echo "<tr><td colspan='9'>Aucun utilisateur trouvé</td></tr>";
+                                        echo "<tr><td colspan='8'>Aucun utilisateur trouvé</td></tr>";
                                     }
                                     ?>
                                 </tbody>
                                 <tfoot>
-                                  <tr>
-                                      <th>ID</th>
-                                      <th>Admin</th>
-                                      <th>Prénom</th>
-                                      <th>Nom</th>
-                                      <th>Téléphone</th>
-                                      <th>Email</th>
-                                      <th>Adresse</th>
-                                      <th>Mot de passe</th>
-                                  </tr>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Prénom</th>
+                                        <th>Nom</th>
+                                        <th>Téléphone</th>
+                                        <th>Email</th>
+                                        <th>Adresse</th>
+                                        <th>Mot de passe</th>
+                                        <th>Admin</th>
+                                    </tr>
                                 </tfoot>
                             </table>
                         </div>
