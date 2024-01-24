@@ -97,7 +97,7 @@
           <li class="nav-item menu-open">
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/index.php" class="nav-link active">
+                <a href="/index.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Tableau de bord</p>
                 </a>
