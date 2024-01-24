@@ -105,7 +105,7 @@
             </ul>
           </li>
           <li class="nav-item">
-            <a href="/CaninBTS/pages/charts/chartjs.php" class="nav-link">
+            <a href="/pages/charts/chartjs.php" class="nav-link">
               <i class="nav-icon fas fa-chart-pie"></i>
               <p>
                 Reporting
@@ -113,7 +113,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/CaninBTS/pages/forms/inscription.php" class="nav-link">
+            <a href="/pages/forms/inscription.php" class="nav-link">
               <i class="nav-icon fas fa-edit"></i>
               <p>
                 Inscription
@@ -121,7 +121,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/CaninBTS/pages/forms/modification.php" class="nav-link">
+            <a href="/pages/forms/modification.php" class="nav-link">
               <i class="nav-icon fas fa-solid fa-pen"></i>
               <p>
                 Compte Client
@@ -129,13 +129,13 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/CaninBTS/pages/tables/listing.php" class="nav-link">
+            <a href="/pages/tables/listing.php" class="nav-link">
               <i class="nav-icon fas fa-table"></i>
               <p>Base de donnée</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="/CaninBTS/pages/calendar.php" class="nav-link">
+            <a href="/pages/calendar.php" class="nav-link">
               <i class="nav-icon far fa-calendar-alt"></i>
               <p>
               <p>Rendez-Vous</p>
@@ -143,13 +143,13 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/CaninBTS/pages/examples/projects.php" class="nav-link">
+            <a href="/pages/examples/projects.php" class="nav-link">
               <i class="nav-icon fas fa-book"></i>
               <p>Page Admin</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="/CaninBTS/pages/documentation.html" class="nav-link">
+            <a href="/pages/documentation.html" class="nav-link">
               <i class="nav-icon fas fa-file"></i>
               <p>Wiki Interne</p>
             </a>
