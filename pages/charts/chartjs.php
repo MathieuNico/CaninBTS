@@ -1,7 +1,7 @@
 <?php
 $serveur = "localhost"; // Remplacez localhost par l'adresse de votre serveur
 $user = "root"; // Remplacez par votre nom d'utilisateur
-$pass = "root"; // Remplacez par votre mot de passe
+$pass = "Espace1988"; // Remplacez par votre mot de passe
 $dbname = "toilettage"; // Remplacez par le nom de votre base de données
 
 // Connexion à la base de données
