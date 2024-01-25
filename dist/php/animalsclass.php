@@ -189,30 +189,44 @@ class Animal {
     }
 
     public function updateAnimal($formData) {
-        // Récupération des données du formulaire
-        $id = $formData['id'];
-        $name = $formData['name'];
-        $breed = $formData['breed'];
-        $age = $formData['age'];
-        $weight = $formData['weight'];
-        $height = $formData['height'];
-        $comment = $formData['comment'];
-        $is_actif = $formData['is_actif'];
-
-        // Préparation de la requête
-        $query = "UPDATE animals SET `name` = :name, `breed` = :breed, `age` = :age, `weight` = :weight, `height` = :height, `comment` = :comment, `is_actif` = :is_actif WHERE id = :id";
-        $stmt = $this->connexion->getPDO()->prepare($query);
-        $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-        $stmt->bindParam(':breed', $breed, PDO::PARAM_STR);
-        $stmt->bindParam(':age', $age, PDO::PARAM_INT);
-        $stmt->bindParam(':weight', $weight, PDO::PARAM_INT);
-        $stmt->bindParam(':height', $height, PDO::PARAM_INT);
-        $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
-        $stmt->bindParam(':is_actif', $is_actif, PDO::PARAM_INT);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-        // Exécution de la requête
-        return $stmt->execute();
+        // Assurez-vous que l'ID de l'animal est inclus dans les données du formulaire
+        $animalId = isset($formData['id']) ? $formData['id'] : null;
+    
+        // Vérifiez si l'ID de l'animal est défini avant de procéder à la mise à jour
+        if ($animalId) {
+            // Récupération des données du formulaire
+            $name = $formData['name'];
+            $breed = $formData['breed'];
+            $age = $formData['age'];
+            $weight = $formData['weight'];
+            $height = $formData['height'];
+            $comment = $formData['comment'];
+            $is_actif = $formData['is_actif'];
+    
+            // Préparation de la requête
+            $updateQuery = "UPDATE animals SET `name` = :name, `breed` = :breed, `age` = :age, `weight` = :weight, `height` = :height, `comment` = :comment, `is_actif` = :is_actif WHERE id = :id";
+            $stmt = $this->connexion->getPDO()->prepare($updateQuery);
+    
+            // Liaison des paramètres
+            $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+            $stmt->bindParam(':breed', $breed, PDO::PARAM_STR);
+            $stmt->bindParam(':age', $age, PDO::PARAM_INT);
+            $stmt->bindParam(':weight', $weight, PDO::PARAM_INT);
+            $stmt->bindParam(':height', $height, PDO::PARAM_INT);
+            $stmt->bindParam(':comment', $comment, PDO::PARAM_STR);
+            $stmt->bindParam(':is_actif', $is_actif, PDO::PARAM_INT);
+            $stmt->bindParam(':id', $animalId, PDO::PARAM_INT);
+    
+            // Exécution de la requête
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            // Gérer le cas où l'ID de l'animal n'est pas défini
+            return false;
+        }
     }
 }
 ?>
