@@ -138,8 +138,8 @@
                     <td class="editable" id="name_' . $result['customer']['id'] . '">' . $result['animal']['name'] . '</td>
                     <td class="editable" id="breed_' . $result['customer']['id'] . '">' . $result['animal']['breed'] . '</td>
                     <td><i class="fas fa-edit" onclick="editRecord(event, ' . $result['customer']['id'] . ')" style="cursor: pointer;"></i>
-                    <a href="pages/customers/detailCustomer.php?id="><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
-                    <a href="detailrdv.php"><i class="far fa-calendar-alt" style="cursor: pointer; margin-left: 10px;"></i></a></td>
+                    <a href="pages/customers/detailCustomer.php?id=' . $result['customer']['id'] . '"><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
+            
                 </tr>';
             }
 
@@ -207,8 +207,8 @@
                     <td class="editable" id="name_' . $result['customer']['id'] . '">' . $result['customer']['name'] . '</td>
                     <td class="editable" id="breed_' . $result['customer']['id'] . '">' . $result['customer']['breed'] . '</td>
                     <td><i class="fas fa-edit" onclick="editRecord(event, ' . $result['customer']['id'] . ')" style="cursor: pointer;"></i>
-                    <a href="detailclient.php"><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
-                    <a href="detailrdv.php"><i class="far fa-calendar-alt" style="cursor: pointer; margin-left: 10px;"></i></a></td>
+                    <a href="pages/customers/detailCustomer.php?id=' . $result['customer']['id'] . '"><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
+                
                 </tr>';
               }
 
