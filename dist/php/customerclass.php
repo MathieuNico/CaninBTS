@@ -166,6 +166,19 @@ class Customer {
         }
     }
 
+        public function updateCustomerAjax($customerId, $newData) {
+        // Utilisez des requêtes préparées pour éviter les attaques par injection SQL
+        $updateQuery = "UPDATE customers SET lastname = ?, firstname = ?, mail = ? WHERE id = ?";
+        $stmt = $this->connexion->getPDO()->prepare($updateQuery);
+    
+        // Vérifiez si la requête a réussi
+        if ($stmt->execute([$newData['lastname'], $newData['firstname'], $newData['mail'], $customerId])) {
+            return true; // La mise à jour a réussi
+        } else {
+            return false; // La mise à jour a échoué
+        }
+    }
+
     public function updateCustomerAll($formData) {
         // Validate and sanitize user input
         $id = $this->sanitizeInput($formData['id']);
