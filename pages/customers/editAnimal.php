@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Appeler une méthode pour mettre à jour les informations de l'animal
     // Cette méthode doit être ajoutée dans votre classe Animal
-    $result = $animalInstance->updateAnimals($_POST);
+    $result = $animalInstance->updateAnimal($_POST);
 
     if ($result) {
         // Rediriger vers une page de succès ou afficher un message
