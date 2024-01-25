@@ -129,7 +129,6 @@ if ($customerId) {
                                     <th>taille</th>
                                     <th>commentaire</th>
                                     <th>actif</th>
-                                    <th>voir</th>
                                     <th>Modifier</th>
                                     <th>Supprimer</th>
                                 </tr>
@@ -146,7 +145,6 @@ if ($customerId) {
                                   <td><?php echo $animal->height; ?></td>
                                   <td><?php echo $animal->comment; ?></td>
                                   <td><?php echo $animal->is_actif ? 'Oui' : 'Non'; ?></td>
-                                  <td><a href="detailAnimal.php?id=<?php echo $animal->id; ?>" class="btn btn-primary">voir</a></td>
                                   <td><a href="editAnimal.php?id=<?php echo $animal->id; ?>" class="btn btn-primary">Modifier</a></td>
                                   <td><button class="btn btn-danger btn-disable-animal" data-id="<?php echo $animal->id; ?>">Désactiver</button></td>
                                 </tr>
@@ -167,7 +165,6 @@ if ($customerId) {
                                     <th>taille</th>
                                     <th>commentaire</th>
                                     <th>actif</th>
-                                    <th>voir</th>
                                     <th>Modifier</th>
                                     <th>Supprimer</th>
                                 </tr>
