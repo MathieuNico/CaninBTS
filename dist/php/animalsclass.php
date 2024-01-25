@@ -69,7 +69,7 @@ class Animal {
         return $results; // Retourne les résultats
     }
 
-    public function updateAnimalByID($customerId, $newData) {
+    public function updateAnimalAjax($customerId, $newData) {
         // Utilisez des requêtes préparées pour éviter les attaques par injection SQL
         $updateQuery = "UPDATE animals SET `name` = ?, breed = ? WHERE customer_id = ?";
         $stmt = $this->connexion->getPDO()->prepare($updateQuery);
