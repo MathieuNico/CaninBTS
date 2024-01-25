@@ -188,7 +188,7 @@ class Animal {
         }
     }
 
-    public function updateAnimals($formData) {
+    public function updateAnimal($formData) {
         // Récupération des données du formulaire
         $id = $formData['id'];
         $name = $formData['name'];
