@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $customerInstance->updateCustomerAjax($customerId, $customerData);
 
     // Mettez à jour les informations de l'animal
-    $animalResult = $animalInstance->updateAnimal($customerId, $animalData);
+    $animalResult = $animalInstance->updateAnimalAjax($customerId, $animalData);
 
     if ($result && $animalResult) {
         echo json_encode(['success' => true]);
