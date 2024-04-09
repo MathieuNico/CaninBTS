@@ -1,17 +1,4 @@
 <?php
-$serveur = "localhost"; // Remplacez localhost par l'adresse de votre serveur
-$user = "root"; // Remplacez par votre nom d'utilisateur
-$pass = "root"; // Remplacez par votre mot de passe
-$dbname = "toilettage"; // Remplacez par le nom de votre base de données
-
-// Connexion à la base de données
-$connexion = new mysqli($serveur, $user, $pass, $dbname);
-
-// Vérifier la connexion
-if ($connexion->connect_error) {
-    die("La connexion a échoué : " . $connexion->connect_error);
-}
-
 session_start();
 if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
     // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
@@ -21,41 +8,59 @@ if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
 // Le nom d'utilisateur est stocké dans $_SESSION["username"]
 $nomUtilisateur = $_SESSION["username"];
 
+require_once '../../dist/php/connectionclass.php';
+
+// Connexion à la base de données
+$connexionClass = new Connexion();
+
+// Utiliser l'instance de la classe Connexion au lieu des variables directes
+$connexion = $connexionClass->getPDO();
+
 // Requête pour Diagramme Race
-$req = mysqli_query($connexion,"SELECT COUNT(*) as count FROM animals WHERE breed IN ('Golden Retriever', 'Labrador Retriever','Bulldog','German Shepherd') GROUP BY breed;");
-// Requêtre pour Diagramme Service
-$req2 = mysqli_query($connexion,"SELECT service_id, COUNT(user_id) AS nombredemploye FROM capabilities GROUP BY service_id;");
-$reqserv = mysqli_query($connexion,"SELECT name, id FROM services;");
+$sqlRace = "SELECT COUNT(*) as count FROM animals WHERE breed IN ('Golden Retriever', 'Labrador Retriever','Bulldog','German Shepherd') GROUP BY breed";
+$reqRace = $connexionClass->query($sqlRace);
+$donne = $reqRace->fetchAll(PDO::FETCH_COLUMN);
+
+// Requête pour Diagramme Service
+$sqlService = "SELECT service_id, COUNT(user_id) AS nombredemploye FROM capabilities GROUP BY service_id";
+$reqService = $connexionClass->query($sqlService);
+$linedonne = $reqService->fetchAll(PDO::FETCH_COLUMN);
+
+// Requête pour récupérer les noms de services
+$sqlServNames = "SELECT name FROM services";
+$reqServNames = $connexionClass->query($sqlServNames);
+$service = $reqServNames->fetchAll(PDO::FETCH_COLUMN);
+
 // Requête pour Diagramme Poids
-$reqcategory = mysqli_query($connexion,"SELECT CASE WHEN weight > 30 AND weight < 50 THEN 'Poids normal' WHEN weight >= 50 THEN 'Poids élevé' WHEN weight <= 30 THEN 'Poids léger' END AS category_weight, COUNT(*) AS number_animal FROM animals GROUP BY category_weight;");
+$sqlWeight = "SELECT
+    CASE
+        WHEN weight > 30 AND weight < 50 THEN 'Poids normal'
+        WHEN weight >= 50 THEN 'Poids élevé'
+        WHEN weight <= 30 THEN 'Poids léger'
+    END AS category_weight,
+    COUNT(*) AS number_animal
+FROM animals GROUP BY category_weight";
+$reqWeight = $connexionClass->query($sqlWeight);
+$categoryWeightData = $reqWeight->fetchAll(PDO::FETCH_ASSOC);
+$category = array_column($categoryWeightData, 'category_weight');
+$poid = array_column($categoryWeightData, 'number_animal');
+
 // Requête pour Diagramme Age
-$reqage = mysqli_query($connexion,"SELECT CASE WHEN age > 10 THEN 'Chien agé' WHEN age >= 5 AND age <= 10 THEN 'Entre 5 et 10 ans' WHEN age < 5 THEN '< 5 ans' END AS category_age, COUNT(*) AS number_animal_age FROM animals GROUP BY category_age;");
-
-// Affecte Donnée de la requête pour Diagramme Race à la variable $donne
-foreach($req as $data){
-  $donne[]= $data['count'];
-}
-// Affecte Donnée de la requête pour Diagramme Service à la variable $linedonne et $service
-foreach($req2 as $data){
-  $linedonne[]= $data['nombredemploye'];
-}
-foreach($reqserv as $data){
-  $service[] = $data['name'];
-}
-// affecte Donnée de la requête pour Diagramme Poids à la variable $category et $poid
-foreach($reqcategory as $data){
-  $category[] = $data['category_weight'];
-  $poid[] = $data['number_animal'];
-}
-// Affecte Donnée de la requête pour Diagramme Age à la variable $categoage et $age
-foreach($reqage as $data){
-  $categoage[] = $data['category_age'];
-  $age[] = $data['number_animal_age'];
-
-}
+$sqlAge = "SELECT
+    CASE
+        WHEN age > 10 THEN 'Chien agé'
+        WHEN age >= 5 AND age <= 10 THEN 'Entre 5 et 10 ans'
+        WHEN age < 5 THEN '< 5 ans'
+    END AS category_age,
+    COUNT(*) AS number_animal_age
+FROM animals GROUP BY category_age";
+$reqAge = $connexionClass->query($sqlAge);
+$categoryAgeData = $reqAge->fetchAll(PDO::FETCH_ASSOC);
+$categoage = array_column($categoryAgeData, 'category_age');
+$age = array_column($categoryAgeData, 'number_animal_age');
 
 // Fermer la connexion
-$connexion->close();
+$connexionClass = null;
 ?>
 
 <?php

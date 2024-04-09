@@ -4,7 +4,7 @@ class Connexion {
 
     public $host = "localhost";
     public $username = "root";
-    public $password = "root";
+    public $password = "";
     public $database = "toilettage";
  
     function __construct() {

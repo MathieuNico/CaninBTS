@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $animalInstance = new Animal();
 
     // Mettez à jour les informations du client
-    $result = $customerInstance->updateCustomer($customerId, $customerData);
+    $result = $customerInstance->updateCustomerAjax($customerId, $customerData);
 
     // Mettez à jour les informations de l'animal
     $animalResult = $animalInstance->updateAnimal($customerId, $animalData);

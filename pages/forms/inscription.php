@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../../dist/php/customerclass.php';
 require_once '../../dist/php/verification.php';
 
@@ -115,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
-                  <button type="submit" onclick="submitBothForms()" class="btn btn-secondary">Envoyer</button>
+                  <button type="submit" class="btn btn-secondary">Envoyer</button>
                 </div>
               </form>
             </div>

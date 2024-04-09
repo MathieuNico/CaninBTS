@@ -2,35 +2,35 @@
 session_start();
 require_once '../../dist/php/verification.php';
 require_once '../../dist/php/customerclass.php';
-// Connexion à la base de données (assure-toi d'avoir une connexion établie)
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "toilettage";
+require_once '../../dist/php/connectionclass.php';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Crée une instance de la classe Connexion
+$connexionClass = new Connexion();
 
-// Vérifie la connexion
-if ($conn->connect_error) {
-    die("La connexion à la base de données a échoué : " . $conn->connect_error);
-}
+// Obtient l'instance PDO à partir de la classe Connexion
+$conn = $connexionClass->getPDO();
 
 // Récupère les données de la table 'animals'
 $sql = "SELECT * FROM animals";
 $result = $conn->query($sql);
+$animals = $result->fetchAll(PDO::FETCH_ASSOC);
 
 // Récupère les données de la table 'customers'
 $sql_customers = "SELECT * FROM customers";
 $result_customers = $conn->query($sql_customers);
+$customers = $result_customers->fetchAll(PDO::FETCH_ASSOC);
 
 // Récupère les données de la table 'services'
 $sql_services = "SELECT * FROM services";
 $result_services = $conn->query($sql_services);
+$services = $result_services->fetchAll(PDO::FETCH_ASSOC);
 
 // Récupère les données de la table 'users'
 $sql_users = "SELECT * FROM users";
 $result_users = $conn->query($sql_users);
+$users = $result_users->fetchAll(PDO::FETCH_ASSOC);
 
+// Le reste de votre code reste inchangé
 ?>
 <?php
 // Inclure le fichier des indicateurs
@@ -78,26 +78,26 @@ $result_users = $conn->query($sql_users);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    // Affiche les données dans le tableau
-                                    if ($result->num_rows > 0) {
-                                        while ($row = $result->fetch_assoc()) {
-                                            echo "<tr>";
-                                            echo "<td>" . $row["id"] . "</td>";
-                                            echo "<td>" . $row["name"] . "</td>";
-                                            echo "<td>" . $row["breed"] . "</td>";
-                                            echo "<td>" . $row["age"] . "</td>";
-                                            echo "<td>" . $row["weight"] . "</td>";
-                                            echo "<td>" . $row["height"] . "</td>";
-                                            echo "<td>" . $row["comment"] . "</td>";
-                                            echo "<td>" . $row["customer_id"] . "</td>";
-                                            echo "</tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='8'>Aucun animal trouvé</td></tr>";
+                                <?php
+                                // Affiche les données dans le tableau
+                                if (!empty($animals)) {
+                                    foreach ($animals as $row) {
+                                        echo "<tr>";
+                                        echo "<td>" . $row["id"] . "</td>";
+                                        echo "<td>" . $row["name"] . "</td>";
+                                        echo "<td>" . $row["breed"] . "</td>";
+                                        echo "<td>" . $row["age"] . "</td>";
+                                        echo "<td>" . $row["weight"] . "</td>";
+                                        echo "<td>" . $row["height"] . "</td>";
+                                        echo "<td>" . $row["comment"] . "</td>";
+                                        echo "<td>" . $row["customer_id"] . "</td>";
+                                        echo "</tr>";
                                     }
-                                    ?>
-                                </tbody>
+                                } else {
+                                    echo "<tr><td colspan='8'>Aucun animal trouvé</td></tr>";
+                                }
+                                ?>
+                            </tbody>
                                 <tfoot>
                                     <tr>
                                         <th>ID</th>
@@ -141,24 +141,24 @@ $result_users = $conn->query($sql_users);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    if ($result_customers->num_rows > 0) {
-                                        while ($row_customers = $result_customers->fetch_assoc()) {
-                                            echo "<tr>";
-                                            echo "<td>" . $row_customers["id"] . "</td>";
-                                            echo "<td>" . $row_customers["firstname"] . "</td>";
-                                            echo "<td>" . $row_customers["lastname"] . "</td>";
-                                            echo "<td>" . $row_customers["mail"] . "</td>";
-                                            echo "<td>" . $row_customers["telephone"] . "</td>";
-                                            echo "<td>" . $row_customers["postal_adress"] . "</td>";
-                                            echo "<td>" . $row_customers["commentary"] . "</td>";
-                                            echo "</tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='7'>Aucun client trouvé</td></tr>";
+                                <?php
+                                if (!empty($customers)) {
+                                    foreach ($customers as $row_customers) {
+                                        echo "<tr>";
+                                        echo "<td>" . $row_customers["id"] . "</td>";
+                                        echo "<td>" . $row_customers["firstname"] . "</td>";
+                                        echo "<td>" . $row_customers["lastname"] . "</td>";
+                                        echo "<td>" . $row_customers["mail"] . "</td>";
+                                        echo "<td>" . $row_customers["telephone"] . "</td>";
+                                        echo "<td>" . $row_customers["postal_adress"] . "</td>";
+                                        echo "<td>" . $row_customers["commentary"] . "</td>";
+                                        echo "</tr>";
                                     }
-                                    ?>
-                                </tbody>
+                                } else {
+                                    echo "<tr><td colspan='7'>Aucun client trouvé</td></tr>";
+                                }
+                                ?>
+                            </tbody>
                                 <tfoot>
                                     <tr>
                                         <th>ID</th>
@@ -197,20 +197,20 @@ $result_users = $conn->query($sql_users);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    if ($result_services->num_rows > 0) {
-                                        while ($row_services = $result_services->fetch_assoc()) {
-                                            echo "<tr>";
-                                            echo "<td>" . $row_services["id"] . "</td>";
-                                            echo "<td>" . $row_services["name"] . "</td>";
-                                            echo "<td>" . $row_services["price"] . "</td>";
-                                            echo "</tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='3'>Aucun service trouvé</td></tr>";
+                                <?php
+                                if (!empty($services)) {
+                                    foreach ($services as $row_services) {
+                                        echo "<tr>";
+                                        echo "<td>" . $row_services["id"] . "</td>";
+                                        echo "<td>" . $row_services["name"] . "</td>";
+                                        echo "<td>" . $row_services["price"] . "</td>";
+                                        echo "</tr>";
                                     }
-                                    ?>
-                                </tbody>
+                                } else {
+                                    echo "<tr><td colspan='3'>Aucun service trouvé</td></tr>";
+                                }
+                                ?>
+                            </tbody>
                                 <tfoot>
                                     <tr>
                                         <th>ID</th>
@@ -250,25 +250,25 @@ $result_users = $conn->query($sql_users);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    if ($result_users->num_rows > 0) {
-                                        while ($row_users = $result_users->fetch_assoc()) {
-                                            echo "<tr>";
-                                            echo "<td>" . $row_users["id"] . "</td>";
-                                            echo "<td>" . $row_users["firstname"] . "</td>";
-                                            echo "<td>" . $row_users["lastname"] . "</td>";
-                                            echo "<td>" . $row_users["telephone"] . "</td>";
-                                            echo "<td>" . $row_users["mail"] . "</td>";
-                                            echo "<td>" . $row_users["postal_adress"] . "</td>";
-                                            echo "<td>" . $row_users["mdp"] . "</td>";
-                                            echo "<td>" . ($row_users["is_admin"] == 1 ? 'Oui' : 'Non') . "</td>";
-                                            echo "</tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='8'>Aucun utilisateur trouvé</td></tr>";
+                                <?php
+                                if (!empty($users)) {
+                                    foreach ($users as $row_users) {
+                                        echo "<tr>";
+                                        echo "<td>" . $row_users["id"] . "</td>";
+                                        echo "<td>" . $row_users["firstname"] . "</td>";
+                                        echo "<td>" . $row_users["lastname"] . "</td>";
+                                        echo "<td>" . $row_users["telephone"] . "</td>";
+                                        echo "<td>" . $row_users["mail"] . "</td>";
+                                        echo "<td>" . $row_users["postal_adress"] . "</td>";
+                                        echo "<td>" . $row_users["mdp"] . "</td>";
+                                        echo "<td>" . ($row_users["is_admin"] == 1 ? 'Oui' : 'Non') . "</td>";
+                                        echo "</tr>";
                                     }
-                                    ?>
-                                </tbody>
+                                } else {
+                                    echo "<tr><td colspan='8'>Aucun utilisateur trouvé</td></tr>";
+                                }
+                                ?>
+                            </tbody>
                                 <tfoot>
                                     <tr>
                                         <th>ID</th>

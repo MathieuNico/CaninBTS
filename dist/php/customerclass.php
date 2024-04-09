@@ -57,6 +57,37 @@ class Customer {
         return $results;
     }
 
+    public function getAppointmentsbyId() {
+        $query = "
+            SELECT 
+                a.*,
+                u.firstname AS user_firstname,
+                a.is_paid,
+                an.name AS animal_name,
+                s.name AS service_name
+            FROM 
+                appointments AS a
+            JOIN 
+                users AS u ON a.user_id = u.id
+            JOIN 
+                animals AS an ON a.animal_id = an.id
+            JOIN 
+                services AS s ON a.service_id = s.id
+            WHERE
+                a.user_id = u.id
+            AND 
+                a.date_start >= CURDATE()
+        ";
+    
+        $stmt = $this->connexion->getPDO()->prepare($query);
+        $stmt->execute();
+    
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        return $results;
+    }
+
+
     public function insertCustomer($formData) {
         $name = $this->sanitizeInput($formData['name']);
         $prenom = $this->sanitizeInput($formData['prenom']);
@@ -166,6 +197,19 @@ class Customer {
         }
     }
 
+    public function updateCustomerAjax($customerId, $newData) {
+        // Utilisez des requêtes préparées pour éviter les attaques par injection SQL
+        $updateQuery = "UPDATE customers SET lastname = ?, firstname = ?, mail = ? WHERE id = ?";
+        $stmt = $this->connexion->getPDO()->prepare($updateQuery);
+    
+        // Vérifiez si la requête a réussi
+        if ($stmt->execute([$newData['lastname'], $newData['firstname'], $newData['mail'], $customerId])) {
+            return true; // La mise à jour a réussi
+        } else {
+            return false; // La mise à jour a échoué
+        }
+    }
+
     public function updateCustomerAll($formData) {
         // Validate and sanitize user input
         $id = $this->sanitizeInput($formData['id']);
@@ -252,15 +296,20 @@ class Customer {
     }
 
     public function getAll() {
-        $customers_result = mysqli_query($this->connexion->conn, "SELECT * FROM customers;");
-        if (!$customers_result) {
+        $query = "SELECT * FROM customers";
+        $stmt = $this->connexion->getPDO()->query($query);
+    
+        if (!$stmt) {
             // Handle the error, log or throw an exception
             die("Database query failed.");
         }
+    
         $customers = [];
-        while ($customer_bdd = mysqli_fetch_assoc($customers_result)) {
+    
+        while ($customer_bdd = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $customers[] = new Customer($customer_bdd);
         }
+    
         return $customers;
     }
 

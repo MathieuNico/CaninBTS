@@ -138,17 +138,18 @@
                     <td class="editable" id="name_' . $result['customer']['id'] . '">' . $result['animal']['name'] . '</td>
                     <td class="editable" id="breed_' . $result['customer']['id'] . '">' . $result['animal']['breed'] . '</td>
                     <td><i class="fas fa-edit" onclick="editRecord(event, ' . $result['customer']['id'] . ')" style="cursor: pointer;"></i>
-                    <a href="pages/customers/detailCustomer.php?id="><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
-                    <a href="detailrdv.php"><i class="far fa-calendar-alt" style="cursor: pointer; margin-left: 10px;"></i></a></td>
+                    <a href="pages/customers/detailCustomer.php?id=' . $result['customer']['id'] . '"><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
+            
                 </tr>';
             }
 
-              echo '</table>';
-              } else {
-              echo 'Aucun résultat trouvé.';
-              }
-              }
-              ?>
+                    echo '</table>';
+                } else {
+                    echo 'Aucun résultat trouvé.';
+                }
+            }
+            ?>
+
             </div>
           </div>
         </div>
@@ -186,6 +187,7 @@
 
               // Appeler la fonction de recherche
                 $results = $animalInstance->searchAnimal($searchData);
+              
 
               // Afficher les résultats sous forme de tableau HTML
               if (!empty($results)) {
@@ -207,8 +209,8 @@
                     <td class="editable" id="name_' . $result['customer']['id'] . '">' . $result['customer']['name'] . '</td>
                     <td class="editable" id="breed_' . $result['customer']['id'] . '">' . $result['customer']['breed'] . '</td>
                     <td><i class="fas fa-edit" onclick="editRecord(event, ' . $result['customer']['id'] . ')" style="cursor: pointer;"></i>
-                    <a href="detailclient.php"><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
-                    <a href="detailrdv.php"><i class="far fa-calendar-alt" style="cursor: pointer; margin-left: 10px;"></i></a></td>
+                    <a href="pages/customers/detailCustomer.php?id=' . $result['customer']['id'] . '"><i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i></a>
+                
                 </tr>';
               }
 
@@ -290,3 +292,6 @@
       </div><!-- /.container-fluid -->
     </section>
   </div>
+  <!-- BoutonModifier -->
+
+<script src="/CaninBTS/dist/js/editform.js"></script>

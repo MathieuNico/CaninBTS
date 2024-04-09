@@ -5,16 +5,19 @@ $connexion = new Connexion();
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["animal_id"])) {
     $animalId = $_POST["animal_id"];
 
-    // Utiliser une requête préparée pour éviter les injections SQL
-    $stmt = $connexion->conn->prepare("UPDATE animals SET is_actif = 0 WHERE id = ?");
-    $stmt->bind_param("i", $animalId); // "i" indique que la variable est un entier
+    try {
+        // Utiliser une requête préparée pour éviter les injections SQL
+        $stmt = $connexion->getPDO()->prepare("UPDATE animals SET is_actif = 0 WHERE id = :animalId");
+        $stmt->bindParam(":animalId", $animalId, PDO::PARAM_INT);
+        $stmt->execute();
 
-    if ($stmt->execute()) {
         echo "success";
-    } else {
+    } catch (PDOException $e) {
         echo "error";
+    } finally {
+        // Fermer la connexion
+        $stmt = null;
     }
-
-    $stmt->close();
 }
 ?>
+

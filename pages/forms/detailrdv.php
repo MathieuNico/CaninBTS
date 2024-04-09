@@ -20,7 +20,7 @@ if (!$appointmentDetails) {
 // Remplacez les valeurs suivantes par les informations de votre base de données
 $serveur = "localhost";
 $utilisateur = "root";
-$motDePasse = "root";
+$motDePasse = "";
 $baseDeDonnees = "toilettage";
 
 // Vérifier la connexion
@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $connexion->close();
 
             // Redirigez l'utilisateur vers une page de confirmation ou une autre page après la mise à jour
-            header("Location: ../../pages/php/verification.php");
+            header("Location: ../calendar.php");
             exit();
         } else {
             echo "Erreur de préparation de la requête : " . $connexion->error;

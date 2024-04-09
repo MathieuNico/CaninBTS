@@ -37,14 +37,14 @@ $services = $servicesInstance->getAll();
 
 
 
-// Récupère les données de la table 'user'
-require_once 'usersclass.php';
+// // Récupère les données de la table 'user'
+// require_once 'userclass.php';
 
-// Créer une instance de la classe Services
-$userInstance = new User();
+// // Créer une instance de la classe Services
+// $userInstance = new User();
 
-// Récupérer tous les services
-$users = $userInstance->getAll();
+// // Récupérer tous les services
+// $users = $userInstance->getAll();
 
 
 
@@ -70,6 +70,33 @@ class Appointment {
             $this->service_id = $appointment_bdd['service_id'];
         }
     }
+    
+    public function sanitizeInput($input) {
+        // Utiliser filter_var() pour nettoyer les données
+        return filter_var($input, FILTER_SANITIZE_STRING);
+    }
+
+    public function insertAppointment($formData) {
+        $start = $this->sanitizeInput($formData['start']);
+        $end = $this->sanitizeInput($formData['end']);
+        $isPaid = $this->sanitizeInput($formData['is_paid']);
+        $userId = $this->sanitizeInput($formData['user_id']);
+        $animalId = $this->sanitizeInput($formData['animal_id']);
+        $serviceId = $this->sanitizeInput($formData['service_id']);
+    
+        $insertAppointmentQuery = "INSERT INTO appointments (`date_start`, `date_end`, `is_paid`, `user_id`, `animal_id`, `service_id`) 
+                                  VALUES (:date_start, :date_end, :is_paid, :user_id, :animal_id, :service_id)";
+    
+        $stmt = $this->connexion->getPDO()->prepare($insertAppointmentQuery);
+        $stmt->bindParam(':date_start', $start, PDO::PARAM_STR);
+        $stmt->bindParam(':date_end', $end, PDO::PARAM_STR);
+        $stmt->bindParam(':is_paid', $isPaid, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindParam(':animal_id', $animalId, PDO::PARAM_INT);
+        $stmt->bindParam(':service_id', $serviceId, PDO::PARAM_INT);
+    
+        return $stmt->execute();
+    }
 
     public function getAll() {
         $appointments_result = mysqli_query($this->connexion->conn, "SELECT * FROM appointments;");
@@ -80,6 +107,22 @@ class Appointment {
         while ($appointment_bdd = mysqli_fetch_assoc($appointments_result)) {
             $appointments[] = new Appointment($appointment_bdd);
         }
+        return $appointments;
+    }
+    public function getUpcomingAppointmentsByAnimalId($animalId) {
+        $currentDate = date('Y-m-d H:i:s');
+        $query = "SELECT * FROM appointments WHERE animal_id = :animal_id AND date_start > :current_date";
+        $stmt = $this->connexion->getPDO()->prepare($query);
+        $stmt->bindParam(':animal_id', $animalId, PDO::PARAM_INT);
+        $stmt->bindParam(':current_date', $currentDate);
+        $stmt->execute();
+    
+        $appointments = [];
+    
+        while ($appointment_bdd = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $appointments[] = new Appointment($appointment_bdd);
+        }
+    
         return $appointments;
     }
     

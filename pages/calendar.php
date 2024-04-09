@@ -1,11 +1,17 @@
+<!-- Inclure jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <?php
 session_start();
 require_once '../dist/php/verification.php';
 require_once '../dist/php/customerclass.php';
+require_once '../dist/php/animalsclass.php';
 // Remplacez les valeurs suivantes par les informations de votre base de données
 $serveur = "localhost";
 $utilisateur = "root";
-$motDePasse = "root";
+$motDePasse = "";
 $baseDeDonnees = "toilettage";
 
 // Connexion à la base de données
@@ -66,6 +72,40 @@ if ($resultat) {
 // } else {
 //     echo "Erreur de requête : " . $connexion->error;
 }
+// Créer une instance de la classe Customer
+$customerInstance = new Customer();
+
+//Vérifier si le formulaire a été soumis
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['searchCustomer'])) {
+    // Récupérer les données du formulaire
+    $searchData = array('search' => $_POST['search']);
+
+    // Appeler la fonction de recherche
+    $results = $customerInstance->searchCustomer($searchData);
+}
+?>
+<?php
+require_once '../dist/php/appointementsclass.php';
+// Créer une instance de la classe Appointment
+$appointmentInstance = new Appointment();
+
+// Vérifier si le formulaire a été soumis
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment'])) {
+    // Récupérer les données du formulaire
+    $formData = array(
+        'start' => $_POST['start'],
+        'end' => $_POST['end'],
+        'is_paid' => $_POST['is_paid'],
+        'user_id' => $_POST['user_id'],  // Assurez-vous de récupérer correctement l'ID de l'utilisateur
+        'animal_id' => $_POST['animal_id'],
+        'service_id' => $_POST['service_id']
+    );
+
+    // Appeler la méthode insertAppointment
+    $appointmentId = $appointmentInstance->insertAppointment($formData);
+
+    // Vous pouvez faire quelque chose avec l'ID du rendez-vous nouvellement inséré, si nécessaire
+}
 ?>
 <?php
 // Inclure le fichier des indicateurs
@@ -79,7 +119,7 @@ if ($resultat) {
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Calendar</h1>
+            <h1>Calendrier</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -99,53 +139,124 @@ if ($resultat) {
             <div class="sticky-top mb-3">
               <div class="card">
                 <div class="card-header">
-                  <h4 class="card-title">Prendre un RDV</h4>
+                  <h4 class="card-title">Prendre un R.D.V</h4>
                 </div>
                 <div class="card-body">
-                  <!-- the events -->
-                  <div id="external-events">
-                    <div class="external-event bg-success">Lunch</div>
-                    <div class="external-event bg-warning">Go home</div>
-                    <div class="external-event bg-info">Do homework</div>
-                    <div class="external-event bg-primary">Work on UI design</div>
-                    <div class="external-event bg-danger">Sleep tight</div>
-                    <div class="checkbox">
-                      <label for="drop-remove">
-                        <input type="checkbox" id="drop-remove">
-                        remove after drop
-                      </label>
+                    <form method="post" class="customer-form">
+                      <div class="card-body">
+                       <div class="form-group">
+                         <input type="texte" class="form-control" name="search" id="name" placeholder="Entrez votre recherche">
+                         </div>
+                       <div style="display: flex; gap: 300px;">
+                          <button id="blockBtn3" style="display: block" name = "searchCustomer" class="btn btn-primary">Rechercher</button>
+                        </div>
+                    </form>
+                        <?php
+                        // Créer une instance de la classe Customer
+                        $customerInstance = new Customer();
+
+                        //Vérifier si le formulaire a été soumis
+                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                            // Récupérer les données du formulaire
+                            $searchData = array('search' => $_POST['search']);
+
+                            // Appeler la fonction de recherche
+                            $results = $customerInstance->searchCustomer($searchData);
+
+                            // Afficher les résultats sous forme de tableau HTML
+                            if (!empty($results)) {
+                                foreach ($results as $result) {
+                                    echo '<div class="result-item">';
+                                    echo '<p> <h6 style="font-style: italic; font-weight: bold; color: blue;"> Nom : </h6> <span class="editable" id="lastname_' . $result['customer']['id'] . '">' . $result['customer']['lastname'] . '</span></p>';
+                                    echo '<p> <h6 style="font-style: italic; font-weight: bold; color: blue;"> Prénom : </h6> <span class="editable" id="firstname_' . $result['customer']['id'] . '">' . $result['customer']['firstname'] . '</span></p>';
+                                    echo '<p> <h6 style="font-style: italic; font-weight: bold; color: blue;"> Animal : </h6> <span class="editable" id="name_' . $result['customer']['id'] . '">' . $result['animal']['name'] . '</span></p>';
+                                    echo '</div>';
+
+                                    // Récupérer l'ID de l'animal
+                                    $animalId = $result['animal']['id'];
+
+                                    // Récupérer les rendez-vous à venir pour cet animal
+                                    $upcomingAppointments = $appointmentInstance->getUpcomingAppointmentsByAnimalId($animalId);
+
+                                    if (!empty($upcomingAppointments)) {
+                                        echo '<h6 style="font-weight: bold;">Rendez-vous à venir :</h6>';
+                                        echo '<ul>';
+                                        foreach ($upcomingAppointments as $appointment) {
+                                            echo '<li>' . $appointment->date_start . ' - ' . $appointment->date_end . '</li>';
+                                        }
+                                        echo '</ul>';
+                                    } else {
+                                        echo 'Aucun rendez-vous à venir.';
+                                    }
+                                }
+                                echo '</table>';
+                            } else {
+                                echo 'Aucun résultat trouvé.';
+                            }
+                        }
+                        ?>
+                        <div class="card-body">
+                          <form method="post" class="appointment-form">
+                            <div class="form-group">
+                                <label for="start">Date de début</label>
+                                <input type="datetime-local" class="form-control" name="start" id="start" placeholder="Sélectionnez la date de début" lang="fr">
+                            </div>
+                            <div class="form-group">
+                                <label for="end">Date de fin</label>
+                                <input type="datetime-local" class="form-control" name="end" id="end" placeholder="Sélectionnez la date de fin" lang="fr">
+                            </div>
+                            <div class="form-group">
+                                <label for="is_paid">Paiement effectué</label>
+                                <select class="form-control" name="is_paid" id="is_paid">
+                                    <option value="1">Oui</option>
+                                    <option value="0">Non</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                            <label for="userSelect">Sélectionner un salarié</label>
+                                <select class="form-control" name="user_id" id="user_id" multiple>
+                                    <option value="1 - Pierre">Émilie</option>
+                                    <option value="2">Daniel</option>
+                                    <option value="3">Olivia</option>
+                                    <option value="4">Samuel</option>
+                                    <!-- Ajoutez d'autres options selon vos besoins -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="animal_id">Animal</label>
+                                    <select class="form-control select2" name="animal_id" id="animal_id">
+                                    <?php
+                                        // Inclure votre classe Animal et instancier un objet Animal
+                                        $animal = new Animal();
+
+                                        // Récupérer tous les animaux avec leurs maîtres correspondants
+                                        $animals = $animal->getAllAnimalsWithOwners();
+
+                                        // Parcourir les animaux et afficher chaque nom d'animal avec le nom de son maître dans la liste déroulante
+                                        foreach ($animals as $animal) {
+                                            echo '<option value="' . $animal['id'] . '">' . $animal['name'] . ' (Maître : ' . $animal['customer_firstname'] . ')</option>';
+                                        }
+                                        ?>
+                                    </select>
+                            </div>
+                            <div class="form-group">
+                            <label for="serviceSelect">Sélectionner un service</label>
+                                <select class="form-control" name="service_id" id="service_id" multiple>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <!-- Ajoutez d'autres options selon vos besoins -->
+                                </select>
+                            </div>
+                            <button type="submit" id="blockBtn2" style="display: block"  name="submitAppointment" class="btn btn-success">Valider la réservation</button>
+                        </form>
+                      </div>
                     </div>
-                  </div>
                 </div>
                 <!-- /.card-body -->
               </div>
               <!-- /.card -->
-              <div class="card">
-                <div class="card-header">
-                  <h3 class="card-title">Create Event</h3>
-                </div>
-                <div class="card-body">
-                  <div class="btn-group" style="width: 100%; margin-bottom: 10px;">
-                    <ul class="fc-color-picker" id="color-chooser">
-                      <li><a class="text-primary" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-warning" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-success" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-danger" href="#"><i class="fas fa-square"></i></a></li>
-                      <li><a class="text-muted" href="#"><i class="fas fa-square"></i></a></li>
-                    </ul>
-                  </div>
-                  <!-- /btn-group -->
-                  <div class="input-group">
-                    <input id="new-event" type="text" class="form-control" placeholder="Event Title">
-
-                    <div class="input-group-append">
-                      <button id="add-new-event" type="button" class="btn btn-primary">Add</button>
-                    </div>
-                    <!-- /btn-group -->
-                  </div>
-                  <!-- /input-group -->
-                </div>
-              </div>
             </div>
           </div>
           <!-- /.col -->

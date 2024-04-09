@@ -3,7 +3,7 @@
 // Remplacez les valeurs suivantes par les informations de votre base de données
 $serveur = "localhost";
 $utilisateur = "root";
-$motDePasse = "root";
+$motDePasse = "";
 $baseDeDonnees = "toilettage";
 
 // Connexion à la base de données
