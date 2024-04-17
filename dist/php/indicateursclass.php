@@ -294,4 +294,4 @@
   </div>
   <!-- BoutonModifier -->
 
-<script src="/CaninBTS/dist/js/editform.js"></script>
+<script src="/dist/js/editform.js"></script>

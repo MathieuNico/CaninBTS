@@ -22,35 +22,35 @@
   $.widget.bridge('uibutton', $.ui.button)
 </script>
 <!-- Bootstrap 4 -->
-<script src="/CaninBTS/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- ChartJS -->
-<script src="/CaninBTS/plugins/chart.js/Chart.min.js"></script>
+<script src="/plugins/chart.js/Chart.min.js"></script>
 <!-- Sparkline -->
-<script src="/CaninBTS/plugins/sparklines/sparkline.js"></script>
+<script src="/plugins/sparklines/sparkline.js"></script>
 <!-- JQVMap -->
-<script src="/CaninBTS/plugins/jqvmap/jquery.vmap.min.js"></script>
-<script src="/CaninBTS/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+<script src="/Cplugins/jqvmap/jquery.vmap.min.js"></script>
+<script src="/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
 <!-- jQuery Knob Chart -->
-<script src="/CaninBTS/plugins/jquery-knob/jquery.knob.min.js"></script>
+<script src="/plugins/jquery-knob/jquery.knob.min.js"></script>
 <!-- daterangepicker -->
-<script src="/CaninBTS/plugins/moment/moment.min.js"></script>
-<script src="/CaninBTS/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="/plugins/moment/moment.min.js"></script>
+<script src="/plugins/daterangepicker/daterangepicker.js"></script>
 <!-- Tempusdominus Bootstrap 4 -->
-<script src="/CaninBTS/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <!-- Summernote -->
-<script src="/CaninBTS/plugins/summernote/summernote-bs4.min.js"></script>
+<script src="/plugins/summernote/summernote-bs4.min.js"></script>
 <!-- overlayScrollbars -->
-<script src="/CaninBTS/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <!-- AdminLTE App -->
-<script src="/CaninBTS/dist/js/adminlte.js"></script>
+<script src="/dist/js/adminlte.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="/CaninBTS/dist/js/demo.js"></script>
+<script src="/dist/js/demo.js"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="/CaninBTS/dist/js/pages/dashboard.js"></script>
+<script src="/dist/js/pages/dashboard.js"></script>
 <!-- BoutonModifier -->
-<script src="/CaninBTS/dist/js/editform.js"></script>
+<script src="/dist/js/editform.js"></script>
 
-<script src="/CaninBTS/dist/js/pages/bouton.js"></script>
+<script src="/dist/js/pages/bouton.js"></script>
 <!-- Page specific script -->
 <script>
 $(function () {
