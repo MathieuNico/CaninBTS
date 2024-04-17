@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
 ?>
 <?php
 // Inclure le fichier des indicateurs
-    include '../../dist/php/menuheader.php';
+    include '/../../dist/php/menuheader.php';
 ?>
 
   <!-- Content Wrapper. Contains page content -->
@@ -318,5 +318,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
 
 <?php
 // Inclure le fichier des indicateurs
-    include '../dist/php/menufooter.php';
+    include '/../../dist/php/menufooter.php';
 ?>
