@@ -23,7 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Appeler la méthode pour insérer les données du client et récupérer l'ID du client
     $user_insert = $user_instance->insertUser($_POST);
 }
-
+  // Le nom d'utilisateur est stocké dans $_SESSION["username"]
+  $nomUtilisateur = $_SESSION["username"];
 
 
 ?>

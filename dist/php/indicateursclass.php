@@ -272,7 +272,7 @@
                 <td>' . $result['user_firstname'] . '</td>
                 <td>' . $result['service_name'] . '</td>
                 <td>
-                    <a href="detailrdv.php?id=' . $result['id'] . '">
+                    <a href="pages/forms/detailrdv.php?id=' . $result['id'] . '">
                         <i class="fas fa-eye" style="cursor: pointer; margin-left: 10px;"></i>
                     </a>
                 </td>

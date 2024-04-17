@@ -99,6 +99,23 @@ class User {
         return ($services);
     }
 
+    public function updateCapabilities($user_id, $selected_services) {
+        // // Supprimez d'abord toutes les entrées existantes pour cet utilisateur
+        // $delete_query = $this->connexion->getPDO()->prepare("DELETE FROM capabilities WHERE user_id = :user_id");
+        // $delete_query->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        // $delete_query->execute();
+        
+        // Insérez ensuite les nouvelles entrées pour les services sélectionnés
+        $insert_query = $this->connexion->getPDO()->prepare("INSERT INTO capabilities (user_id, service_id) VALUES (:user_id, :service_id)");
+        $insert_query->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $insert_query->bindParam(':service_id', $service_id, PDO::PARAM_INT);
+        
+        foreach ($selected_services as $service_id) {
+            $insert_query->execute();
+        }
+    }
+
+
     public function getAllServices() {
         $service_names = [];
         $getName = $this->connexion->getPDO()->query("SELECT name FROM services ;");

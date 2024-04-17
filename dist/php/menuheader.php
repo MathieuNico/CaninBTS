@@ -44,9 +44,6 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="index.php" class="nav-link">Home</a>
-      </li>
-      <li class="nav-item d-none d-sm-inline-block">
         <a href="#" class="nav-link">Bonjour  <?php echo $nomUtilisateur; ?></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
@@ -146,12 +143,6 @@
             <a href="/CaninBTS/pages/examples/projects.php" class="nav-link">
               <i class="nav-icon fas fa-book"></i>
               <p>Page Admin</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="/CaninBTS/pages/documentation.html" class="nav-link">
-              <i class="nav-icon fas fa-file"></i>
-              <p>Wiki Interne</p>
             </a>
           </li>
         </ul>

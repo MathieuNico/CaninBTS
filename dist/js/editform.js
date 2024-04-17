@@ -65,7 +65,7 @@ function saveRecord(event, customerId) {
                 document.getElementById('name_' + customerId).innerHTML = editedName;
                 document.getElementById('breed_' + customerId).innerHTML = editedBreed;
             } else {
-                alert('Échec de la mise à jour.');
+              
             }
         }
     };
