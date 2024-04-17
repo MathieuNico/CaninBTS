@@ -47,7 +47,7 @@
         <a href="#" class="nav-link">Bonjour  <?php echo $nomUtilisateur; ?></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="logout.php" class="nav-link">Se déconnecter</a>
+        <a href="/logout.php" class="nav-link">Se déconnecter</a>
       </li>
     </ul>
 
