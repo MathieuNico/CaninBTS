@@ -126,13 +126,13 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/pages/tables/listing.php" class="nav-link">
+            <a href="pages/tables/listing.php" class="nav-link">
               <i class="nav-icon fas fa-table"></i>
               <p>Base de donnée</p>
             </a>
           </li>
           <li class="nav-item">
-            <a href="/pages/calendar.php" class="nav-link">
+            <a href="pages/calendar.php" class="nav-link">
               <i class="nav-icon far fa-calendar-alt"></i>
               <p>
               <p>Rendez-Vous</p>
@@ -140,7 +140,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="/pages/examples/projects.php" class="nav-link">
+            <a href="pages/examples/projects.php" class="nav-link">
               <i class="nav-icon fas fa-book"></i>
               <p>Page Admin</p>
             </a>
