@@ -8,7 +8,7 @@ session_start();
 define("BASE_URL", "/"); // Remplacez "/votre_site" par le chemin réel de votre site
 if (!isset($_SESSION["isLoggedIn"]) || $_SESSION["isLoggedIn"] !== true) {
     // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
-    header("Location:" . BASE_URL . "/login.php");
+    header("Location:https://canin.jeremietran.fr/login.php");
     exit;
 }
 // Le nom d'utilisateur est stocké dans $_SESSION["username"]
