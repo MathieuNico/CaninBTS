@@ -4,7 +4,7 @@ Cette mission a pour objectif de créer un ERP pour un magasin de toilettage ani
 
 ## Canin 
 
-![alt text](https://github.com/JeremieTran/PortfolioJT/blob/master/canin.png)
+![alt text](https://github.com/JeremieTran/PortfolioJT/blob/main/canin.png)
 
 ## Installation
 
