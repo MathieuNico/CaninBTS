@@ -43,6 +43,7 @@ function editRecord(event, customerId) {
 }
 
 function saveRecord(event, customerId) {
+    // Empêchez le comportement par défaut du formulaire
 
     // Récupérez les valeurs éditées depuis les champs de saisie en utilisant l'ID du client
     var editedLastName = document.getElementById('edit_lastname_' + customerId).value;
@@ -50,6 +51,20 @@ function saveRecord(event, customerId) {
     var editedMail = document.getElementById('edit_mail_' + customerId).value;
     var editedName = document.getElementById('edit_name_' + customerId).value;
     var editedBreed = document.getElementById('edit_breed_' + customerId).value;
+
+    // Remettez les champs en lecture seule
+    document.getElementById('edit_lastname_' + customerId).readOnly = true;
+    document.getElementById('edit_firstname_' + customerId).readOnly = true;
+    document.getElementById('edit_mail_' + customerId).readOnly = true;
+    document.getElementById('edit_name_' + customerId).readOnly = true;
+    document.getElementById('edit_breed_' + customerId).readOnly = true;
+
+    // Supprimez le bouton "Enregistrer"
+    var saveButtonId = 'save_button_' + customerId;
+    var saveButton = document.getElementById(saveButtonId);
+    if (saveButton) {
+        saveButton.parentNode.removeChild(saveButton);
+    }
 
     // Envoyez une requête AJAX au script PHP côté serveur pour effectuer la mise à jour
     var xhr = new XMLHttpRequest();
@@ -66,7 +81,7 @@ function saveRecord(event, customerId) {
                 document.getElementById('name_' + customerId).innerHTML = editedName;
                 document.getElementById('breed_' + customerId).innerHTML = editedBreed;
             } else {
-              
+                // Gérer les cas d'erreur ici, si nécessaire
             }
         }
     };
