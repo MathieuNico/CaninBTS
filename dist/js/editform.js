@@ -1,6 +1,6 @@
 
 function editRecord(event, customerId) {
-    event.preventDefault();
+    // event.preventDefault();
 
     var lastNameElement = document.getElementById('lastname_' + customerId);
     var firstNameElement = document.getElementById('firstname_' + customerId);
