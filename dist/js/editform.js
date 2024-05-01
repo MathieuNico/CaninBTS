@@ -54,7 +54,7 @@ function saveRecord(event, customerId) {
 
     // Envoyez une requête AJAX au script PHP côté serveur pour effectuer la mise à jour
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/dist/php/updatecustomerclass.php', true);
+    xhr.open('POST', 'https://canin.jeremietran.fr/dist/php/updatecustomerclass.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
