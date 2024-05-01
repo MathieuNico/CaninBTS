@@ -66,6 +66,7 @@ function saveRecord(event, customerId) {
                 document.getElementById('mail_' + customerId).innerHTML = editedMail;
                 document.getElementById('name_' + customerId).innerHTML = editedName;
                 document.getElementById('breed_' + customerId).innerHTML = editedBreed;
+                location.reload();
             } else {
               
             }
