@@ -1,6 +1,6 @@
 
 function editRecord(event, customerId) {
-    // event.preventDefault();
+    event.preventDefault();
 
     var lastNameElement = document.getElementById('lastname_' + customerId);
     var firstNameElement = document.getElementById('firstname_' + customerId);
@@ -43,7 +43,7 @@ function editRecord(event, customerId) {
 }
 
 function saveRecord(event, customerId) {
-    event.preventDefault();
+    // event.preventDefault();
 
     // Récupérez les valeurs éditées depuis les champs de saisie en utilisant l'ID du client
     var editedLastName = document.getElementById('edit_lastname_' + customerId).value;
