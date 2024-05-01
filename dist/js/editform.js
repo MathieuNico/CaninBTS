@@ -35,6 +35,7 @@ function editRecord(event, customerId) {
 
     // Ajoutez un auditeur d'événements au bouton "Enregistrer"
     var saveButton = document.getElementById(saveButtonId);
+    console.log(saveButton);
     saveButton.addEventListener('click', function(event) {
         console.log('Bouton "Enregistrer" cliqué !'); // Vérifiez si ce message s'affiche dans la console
         saveRecord(event, customerId);
