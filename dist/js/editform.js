@@ -24,7 +24,7 @@ function editRecord(event, customerId) {
 
     // Ajoutez un bouton "Enregistrer" avec un identifiant unique
     var saveButtonId = 'save_button_' + customerId;
-    breedElement.innerHTML += '<i class="fas fa-save" id="' + saveButtonId + '" onclick="saveRecord(event, ' + customerId + ')" style="cursor: pointer; margin-left: 15px; font-size: 20px;"></i>';
+    breedElement.innerHTML += '<i class="fas fa-save" id="' + saveButtonId + '" style="cursor: pointer; margin-left: 15px; font-size: 20px;"></i>';
 
     // Ajoutez l'ID du client comme attribut de données aux champs de saisie
     document.getElementById('edit_lastname_' + customerId).dataset.customerId = customerId;
@@ -54,7 +54,7 @@ function saveRecord(event, customerId) {
 
     // Envoyez une requête AJAX au script PHP côté serveur pour effectuer la mise à jour
     var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://canin.jeremietran.fr', true);
+    xhr.open('POST', '/dist/php/updatecustomerclass.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
