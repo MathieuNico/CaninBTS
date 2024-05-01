@@ -58,8 +58,8 @@ function saveRecord(event, customerId) {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var response = JSON.parse(xhr.responseText);
             if (response.success) {
-                // Mise à jour réussie, mettez à jour l'affichage si nécessaire
-                updateDisplay(customerId, editedLastName, editedFirstName, editedMail, editedName, editedBreed);
+                // Mise à jour réussie, actualisez la page
+                location.reload();
             } else {
                 // Gérer les cas d'erreur ici, si nécessaire
             }
@@ -68,13 +68,4 @@ function saveRecord(event, customerId) {
 
     // Utilisez l'ID du client pour récupérer les valeurs mises à jour
     xhr.send('customerId=' + customerId + '&lastname=' + editedLastName + '&firstname=' + editedFirstName + '&mail=' + editedMail + '&name=' + editedName + '&breed=' + editedBreed);
-}
-
-function updateDisplay(customerId, editedLastName, editedFirstName, editedMail, editedName, editedBreed) {
-    // Mettre à jour l'affichage des éléments modifiés
-    document.getElementById('lastname_' + customerId).innerHTML = editedLastName;
-    document.getElementById('firstname_' + customerId).innerHTML = editedFirstName;
-    document.getElementById('mail_' + customerId).innerHTML = editedMail;
-    document.getElementById('name_' + customerId).innerHTML = editedName;
-    document.getElementById('breed_' + customerId).innerHTML = editedBreed;
 }
