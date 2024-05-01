@@ -36,6 +36,7 @@ function editRecord(event, customerId) {
     // Ajoutez un auditeur d'événements au bouton "Enregistrer"
     var saveButton = document.getElementById(saveButtonId);
     saveButton.addEventListener('click', function(event) {
+        console.log('Bouton "Enregistrer" cliqué !'); // Vérifiez si ce message s'affiche dans la console
         saveRecord(event, customerId);
     });
 }
@@ -58,10 +59,14 @@ function saveRecord(event, customerId) {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var response = JSON.parse(xhr.responseText);
             if (response.success) {
-                // Mise à jour réussie, actualisez la page
-                location.reload();
+                // Mise à jour réussie, mettez à jour l'affichage si nécessaire
+                document.getElementById('lastname_' + customerId).innerHTML = editedLastName;
+                document.getElementById('firstname_' + customerId).innerHTML = editedFirstName;
+                document.getElementById('mail_' + customerId).innerHTML = editedMail;
+                document.getElementById('name_' + customerId).innerHTML = editedName;
+                document.getElementById('breed_' + customerId).innerHTML = editedBreed;
             } else {
-                // Gérer les cas d'erreur ici, si nécessaire
+              
             }
         }
     };
