@@ -53,12 +53,12 @@ function saveRecord(event, customerId) {
     var editedName = document.getElementById('edit_name_' + customerId).value;
     var editedBreed = document.getElementById('edit_breed_' + customerId).value;
 
-    // Remettez les champs en lecture seule en utilisant l'attribut readonly
-    document.getElementById('edit_lastname_' + customerId).readOnly = true;
-    document.getElementById('edit_firstname_' + customerId).readOnly = true;
-    document.getElementById('edit_mail_' + customerId).readOnly = true;
-    document.getElementById('edit_name_' + customerId).readOnly = true;
-    document.getElementById('edit_breed_' + customerId).readOnly = true;
+    // Remplacez les champs de saisie par leur valeur actuelle
+    document.getElementById('edit_lastname_' + customerId).innerHTML = editedLastName;
+    document.getElementById('edit_firstname_' + customerId).innerHTML = editedFirstName;
+    document.getElementById('edit_mail_' + customerId).innerHTML = editedMail;
+    document.getElementById('edit_name_' + customerId).innerHTML = editedName;
+    document.getElementById('edit_breed_' + customerId).innerHTML = editedBreed;
 
     // Supprimez le bouton "Enregistrer"
     var saveButtonId = 'save_button_' + customerId;
