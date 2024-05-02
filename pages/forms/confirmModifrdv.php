@@ -20,7 +20,7 @@ if (!$appointmentDetails) {
 // Remplacez les valeurs suivantes par les informations de votre base de données
 $serveur = "localhost";
 $utilisateur = "root";
-$motDePasse = "root";
+$motDePasse = "Espace1988";
 $baseDeDonnees = "toilettage";
 
 // Vérifier la connexion
