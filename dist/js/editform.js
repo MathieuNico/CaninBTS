@@ -65,8 +65,8 @@ function saveRecord(event, customerId) {
     var saveButton = document.getElementById(saveButtonId);
     if (saveButton) {
         saveButton.parentNode.removeChild(saveButton);
-        var searchParams = new URLSearchParams(window.location.search);
-        window.location.href = window.location.pathname + '?' + searchParams.toString();
+        history.replaceState(null, '', window.location.href);
+        location.reload();
     }
 
     // Envoyez une requête AJAX au script PHP côté serveur pour effectuer la mise à jour
