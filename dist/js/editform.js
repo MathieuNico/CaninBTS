@@ -65,6 +65,8 @@ function saveRecord(event, customerId) {
     var saveButton = document.getElementById(saveButtonId);
     if (saveButton) {
         saveButton.parentNode.removeChild(saveButton);
+        console.log('ça va reload !'); 
+        window.location.href = window.location.href;
     }
 
     // Envoyez une requête AJAX au script PHP côté serveur pour effectuer la mise à jour
@@ -76,8 +78,7 @@ function saveRecord(event, customerId) {
             var response = JSON.parse(xhr.responseText);
             if (response.success) {
                 // Mise à jour réussie, actualisez la page
-                console.log('ça va reload !'); 
-                window.location.href = window.location.href;
+                
             } else {
                 // Gérer les cas d'erreur ici, si nécessaire
             }
