@@ -53,7 +53,7 @@ function saveRecord(event, customerId) {
     var editedName = document.getElementById('edit_name_' + customerId).value;
     var editedBreed = document.getElementById('edit_breed_' + customerId).value;
 
-    // Remplacez les champs de saisie par leur valeur actuelle
+// Remplacez les champs de saisie par leur valeur actuelle
     document.getElementById('edit_lastname_' + customerId).innerHTML = editedLastName;
     document.getElementById('edit_firstname_' + customerId).innerHTML = editedFirstName;
     document.getElementById('edit_mail_' + customerId).innerHTML = editedMail;
@@ -76,7 +76,7 @@ function saveRecord(event, customerId) {
             var response = JSON.parse(xhr.responseText);
             if (response.success) {
                 // Mise à jour réussie, actualisez la page
-                
+                window.location.reload();
             } else {
                 // Gérer les cas d'erreur ici, si nécessaire
             }
