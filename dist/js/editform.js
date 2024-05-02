@@ -76,7 +76,7 @@ function saveRecord(event, customerId) {
             var response = JSON.parse(xhr.responseText);
             if (response.success) {
                 // Mise à jour réussie, actualisez la page
-                location.reload();
+                location.reload(true);
             } else {
                 // Gérer les cas d'erreur ici, si nécessaire
             }
