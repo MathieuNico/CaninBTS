@@ -75,10 +75,7 @@ function saveRecord(event, customerId) {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var response = JSON.parse(xhr.responseText);
             if (response.success) {
-                // Mise à jour réussie, rafraîchissez la page
-                window.addEventListener('beforeunload', function (e) {
-                    delete e['returnValue'];
-                });
+                // Mise à jour réussie, actualisez la page
                 window.location.reload();
             } else {
                 // Gérer les cas d'erreur ici, si nécessaire
