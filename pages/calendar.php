@@ -85,7 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['searchCustomer'])) {
 }
 ?>
 <?php
-session_start(); // Démarrer la session
 require_once '../dist/php/appointementsclass.php';
 // Créer une instance de la classe Appointment
 $appointmentInstance = new Appointment();
@@ -106,16 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
     $appointmentId = $appointmentInstance->insertAppointment($formData);
 
     // Vous pouvez faire quelque chose avec l'ID du rendez-vous nouvellement inséré, si nécessaire
-    // Marquer que le formulaire a été soumis avec succès en utilisant une variable de session
-    $_SESSION['formSubmitted'] = true;
-}
-
-// Recharger la page uniquement si le formulaire a été soumis avec succès
-if (isset($_SESSION['formSubmitted']) && $_SESSION['formSubmitted'] === true) {
-    // Effacer la variable de session pour éviter le rechargement continu
-    unset($_SESSION['formSubmitted']);
-    // Recharger la page
-    echo '<script>window.location.reload();</script>';
 }
 ?>
 <?php
