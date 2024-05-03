@@ -105,6 +105,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
     $appointmentId = $appointmentInstance->insertAppointment($formData);
 
     // Vous pouvez faire quelque chose avec l'ID du rendez-vous nouvellement inséré, si nécessaire
+    // Recharger la page
+    echo '<script>window.location.reload();</script>';
 }
 ?>
 <?php
@@ -198,10 +200,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
                             <div class="form-group">
                             <label for="serviceSelect">Sélectionner un service</label>
                                 <select class="form-control" name="service_id" id="service_id" multiple>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
+                                    <option value="1">1 Toilettage</option>
+                                    <option value="2">2 Coupe</option>
+                                    <option value="3">3 Vaccination</option>
+                                    <option value="4">4 Shampoing</option>
                                     <!-- Ajoutez d'autres options selon vos besoins -->
                                 </select>
                             </div>
