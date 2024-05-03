@@ -151,50 +151,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
                           <!-- <button id="blockBtn3" style="display: block" name = "searchCustomer" class="btn btn-primary">Rechercher</button> -->
                         </div>
                     </form>
-                        <?php
-                        // Créer une instance de la classe Customer
-                        $customerInstance = new Customer();
-
-                        //Vérifier si le formulaire a été soumis
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                            // Récupérer les données du formulaire
-                            $searchData = array('search' => $_POST['search']);
-
-                            // Appeler la fonction de recherche
-                            $results = $customerInstance->searchCustomer($searchData);
-
-                            // Afficher les résultats sous forme de tableau HTML
-                            if (!empty($results)) {
-                                foreach ($results as $result) {
-                                    echo '<div class="result-item">';
-                                    echo '<p> <h6 style="font-style: italic; font-weight: bold; color: blue;"> Nom : </h6> <span class="editable" id="lastname_' . $result['customer']['id'] . '">' . $result['customer']['lastname'] . '</span></p>';
-                                    echo '<p> <h6 style="font-style: italic; font-weight: bold; color: blue;"> Prénom : </h6> <span class="editable" id="firstname_' . $result['customer']['id'] . '">' . $result['customer']['firstname'] . '</span></p>';
-                                    echo '<p> <h6 style="font-style: italic; font-weight: bold; color: blue;"> Animal : </h6> <span class="editable" id="name_' . $result['customer']['id'] . '">' . $result['animal']['name'] . '</span></p>';
-                                    echo '</div>';
-
-                                    // Récupérer l'ID de l'animal
-                                    $animalId = $result['animal']['id'];
-
-                                    // Récupérer les rendez-vous à venir pour cet animal
-                                    $upcomingAppointments = $appointmentInstance->getUpcomingAppointmentsByAnimalId($animalId);
-
-                                    if (!empty($upcomingAppointments)) {
-                                        echo '<h6 style="font-weight: bold;">Rendez-vous à venir :</h6>';
-                                        echo '<ul>';
-                                        foreach ($upcomingAppointments as $appointment) {
-                                            echo '<li>' . $appointment->date_start . ' - ' . $appointment->date_end . '</li>';
-                                        }
-                                        echo '</ul>';
-                                    } else {
-                                        echo '';
-                                    }
-                                }
-                                echo '</table>';
-                            } else {
-                                echo '';
-                            }
-                        }
-                        ?>
                         <div class="card-body">
                           <form method="post" class="appointment-form">
                             <div class="form-group">
