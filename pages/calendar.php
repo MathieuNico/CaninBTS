@@ -105,6 +105,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
     $appointmentId = $appointmentInstance->insertAppointment($formData);
 
     // Vous pouvez faire quelque chose avec l'ID du rendez-vous nouvellement inséré, si nécessaire
+    header('Location: calendar.php');
+    exit(); // Assurez-vous de terminer le script après la redirection
 }
 ?>
 <?php
