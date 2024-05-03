@@ -89,6 +89,9 @@ require_once '../dist/php/appointementsclass.php';
 // Créer une instance de la classe Appointment
 $appointmentInstance = new Appointment();
 
+// Définir une variable pour vérifier si le formulaire a été soumis
+$formSubmitted = false;
+
 // Vérifier si le formulaire a été soumis
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment'])) {
     // Récupérer les données du formulaire
@@ -105,7 +108,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
     $appointmentId = $appointmentInstance->insertAppointment($formData);
 
     // Vous pouvez faire quelque chose avec l'ID du rendez-vous nouvellement inséré, si nécessaire
-    // Recharger la page
+    // Marquer que le formulaire a été soumis
+    $formSubmitted = true;
+}
+
+// Si le formulaire a été soumis, rechargez la page
+if ($formSubmitted) {
     echo '<script>window.location.reload();</script>';
 }
 ?>
