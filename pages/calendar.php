@@ -142,15 +142,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
                   <h4 class="card-title">Prendre un R.D.V</h4>
                 </div>
                 <div class="card-body">
-                    <!-- <form method="post" class="customer-form">
+                    <form method="post" class="customer-form">
                       <div class="card-body">
                        <div class="form-group">
-                         <input type="texte" class="form-control" name="search" id="name" placeholder="Entrez votre recherche">
+                         <!-- <input type="texte" class="form-control" name="search" id="name" placeholder="Entrez votre recherche"> -->
                          </div>
                        <div style="display: flex; gap: 300px;">
-                          <button id="blockBtn3" style="display: block" name = "searchCustomer" class="btn btn-primary">Rechercher</button>
+                          <!-- <button id="blockBtn3" style="display: block" name = "searchCustomer" class="btn btn-primary">Rechercher</button> -->
                         </div>
-                    </form> -->
+                    </form>
                         <?php
                         // Créer une instance de la classe Customer
                         $customerInstance = new Customer();
@@ -186,12 +186,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submitAppointment']))
                                         }
                                         echo '</ul>';
                                     } else {
-                                        echo 'Aucun rendez-vous à venir.';
+                                        echo '';
                                     }
                                 }
                                 echo '</table>';
                             } else {
-                                echo 'Aucun résultat trouvé.';
+                                echo '';
                             }
                         }
                         ?>
